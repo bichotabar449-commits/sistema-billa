@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión para Billar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .connection-status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .connection-status.connected {
+            background: #43e97b;
+            color: white;
+        }
+
+        .connection-status.disconnected {
+            background: #f5576c;
+            color: white;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 24px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .table-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .table-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .table-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .table-item.occupied {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .table-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .table-status {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .table-time {
+            font-size: 1.2em;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .history-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .history-amount {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .product-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .code-box {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            overflow-x: auto;
+            margin: 15px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎱 Sistema de Gestión para Billar</h1>
+            <p>Gestión profesional con Google Sheets (100% Gratis)</p>
+            <div id="connectionStatus" class="connection-status disconnected">
+                ⚠️ No Configurado
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Mesas de Billar -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🎱</div>
+                    <div class="card-title">Mesas de Billar</div>
+                </div>
+                <div class="table-grid" id="tablesGrid"></div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Estadísticas del Día</div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="activeTables">0</div>
+                        <div class="stat-label">Activas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalRevenue">$0</div>
+                        <div class="stat-label">Ingresos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalSessions">0</div>
+                        <div class="stat-label">Sesiones</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ventas Rápidas -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">🛒</div>
+                    <div class="card-title">Venta Rápida</div>
+                </div>
+                <div class="form-group">
+                    <label>Producto</label>
+                    <select id="productSelect">
+                        <option value="">Seleccionar producto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cantidad</label>
+                    <input type="number" id="productQuantity" value="1" min="1">
+                </div>
+                <button class="btn btn-success" id="btnQuickSale">Agregar Venta</button>
+            </div>
+
+            <!-- Configuración -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">Configuración</div>
+                </div>
+                <button class="btn btn-primary" id="btnConfigSheets" style="width: 100%; margin-bottom: 10px;">
+                    🔗 Configurar Google Sheets
+                </button>
+                <button class="btn btn-primary" id="btnManageProducts" style="width: 100%; margin-bottom: 10px;">
+                    Gestionar Productos
+                </button>
+                <button class="btn btn-primary" id="btnConfigTables" style="width: 100%; margin-bottom: 10px;">
+                    Configurar Mesas
+                </button>
+                <button class="btn btn-primary" id="btnConfigPrices" style="width: 100%;">
+                    Configurar Precios
+                </button>
+            </div>
+        </div>
+
+        <!-- Historial de Ventas -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">📝</div>
+                <div class="card-title">Historial de Hoy</div>
+            </div>
+            <button class="btn btn-success" id="btnSyncSheets" style="margin-bottom: 15px;">
+                ☁️ Guardar en Google Sheets
+            </button>
+            <button class="btn btn-danger" id="btnClearHistory" style="margin-bottom: 15px;">
+                Limpiar Historial
+            </button>
+            <button class="btn btn-primary" id="btnExportReport" style="margin-bottom: 15px;">
+                📄 Exportar Reporte
+            </button>
+            <div id="salesHistory"></div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="tableModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">Mesa #1</div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let tables = [];
+        let sales = [];
+        let activeIntervals = {};
+        let HOURLY_RATE = 15000;
+        let NUM_TABLES = 8;
+        let SHEETS_URL = '';
+        
+        let products = [
+            { name: 'Cerveza', price: 5000 },
+            { name: 'Gaseosa', price: 3000 },
+            { name: 'Agua', price: 2000 },
+            { name: 'Snack', price: 4000 },
+            { name: 'Michelada', price: 7000 },
+            { name: 'Café', price: 2500 },
+            { name: 'Sandwich', price: 8000 }
+        ];
+
+        // ========================================
+        // CONFIGURACIÓN
+        // ========================================
+        
+        function loadConfig() {
+            const savedRate = localStorage.getItem('hourlyRate');
+            const savedTables = localStorage.getItem('numTables');
+            const savedProducts = localStorage.getItem('products');
+            const savedUrl = localStorage.getItem('sheetsUrl');
+            
+            if (savedRate) HOURLY_RATE = parseInt(savedRate);
+            if (savedTables) NUM_TABLES = parseInt(savedTables);
+            if (savedProducts) products = JSON.parse(savedProducts);
+            if (savedUrl) {
+                SHEETS_URL = savedUrl;
+                updateConnectionStatus();
+            }
+        }
+
+        function saveConfig() {
+            localStorage.setItem('hourlyRate', HOURLY_RATE);
+            localStorage.setItem('numTables', NUM_TABLES);
+            localStorage.setItem('products', JSON.stringify(products));
+            localStorage.setItem('sheetsUrl', SHEETS_URL);
+        }
+
+        function updateConnectionStatus() {
+            const statusEl = document.getElementById('connectionStatus');
+            if (SHEETS_URL) {
+                statusEl.className = 'connection-status connected';
+                statusEl.textContent = '✓ Conectado a Google Sheets';
+            } else {
+                statusEl.className = 'connection-status disconnected';
+                statusEl.textContent = '⚠️ No Configurado';
+            }
+        }
+
+        // ========================================
+        // GOOGLE SHEETS
+        // ========================================
+
+        function openSheetsConfig() {
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = '🔗 Configurar Google Sheets';
+            body.innerHTML = `
+                <div class="alert alert-success">
+                    <strong>✓ 100% GRATIS</strong> - Sin costos, sin límites
+                </div>
+
+                <div class="alert alert-info" style="text-align: left;">
+                    <strong>📋 PASOS RÁPIDOS:</strong><br><br>
+                    1. Crea una Google Sheet<br>
+                    2. Ve a <strong>Extensiones → Apps Script</strong><br>
+                    3. Borra todo y pega el código Code.gs<br>
+                    4. Guarda (Ctrl + S)<br>
+                    5. <strong>Implementar → Nueva implementación</strong><br>
+                    6. Tipo: <strong>Aplicación web</strong><br>
+                    7. Ejecutar como: <strong>Yo</strong><br>
+                    8. Acceso: <strong>Cualquier persona</strong><br>
+                    9. <strong>Copia la URL (termina en /exec)</strong><br>
+                    10. Pégala abajo 👇
+                </div>
+
+                <div class="alert alert-warning" style="text-align: left;">
+                    <strong>⚠️ MUY IMPORTANTE:</strong><br>
+                    • La URL DEBE terminar en <strong>/exec</strong> (NO /dev)<br>
+                    • Si cambias el código, crea una <strong>NUEVA implementación</strong>
+                </div>
+
+                <div class="form-group">
+                    <label>URL del Apps Script (termina en /exec)</label>
+                    <input type="text" id="sheetsUrlInput" value="${SHEETS_URL}" 
+                           placeholder="https://script.google.com/macros/s/...../exec">
+                </div>
+
+                <button class="btn btn-success" id="btnSaveSheetsUrl">💾 Guardar y Probar Conexión</button>
+                <button class="btn btn-danger" id="btnCloseModal">Cancelar</button>
+            `;
+            modal.classList.add('active');
+
+            // Event listeners del modal
+            document.getElementById('btnSaveSheetsUrl').addEventListener('click', saveSheetsUrl);
+            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+        }
+
+        async function saveSheetsUrl() {
+            const url = document.getElementById('sheetsUrlInput').value.trim();
+            
+            if (!url) {
+                alert('⚠️ Por favor ingresa la URL del Apps Script');
+                return;
+            }
+
+            if (!url.includes('script.google.com')) {
+                alert('⚠️ La URL debe ser de Google Apps Script\n(debe contener script.google.com)');
+                return;
+            }
+
+            if (!url.endsWith('/exec')) {
+                alert('⚠️ La URL debe terminar en /exec\n\nTu URL termina en: ' + url.split('/').pop() + '\n\nAsegúrate de copiar la URL de la implementación, no del editor.');
+                return;
+            }
+
+            SHEETS_URL = url;
+            saveConfig();
+            updateConnectionStatus();
+
+            // Probar conexión e inicializar
+            const testBtn = document.getElementById('btnSaveSheetsUrl');
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ Probando conexión...';
+
+            try {
+                const initResult = await initializeRemoteDatabase();
+                
+                if (initResult) {
+                    alert('✅ ¡CONEXIÓN EXITOSA!\n\n' +
+                          '📊 Base de datos inicializada:\n' +
+                          '  • Hoja de Ventas\n' +
+                          '  • Historial de Mesas\n' +
+                          '  • Productos Vendidos\n' +
+                          '  • Resumen Diario\n' +
+                          '  • Configuración\n\n' +
+                          '🎉 ¡Ya puedes empezar a usar el sistema!');
+                    closeModal();
+                } else {
+                    throw new Error('No se pudo inicializar');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ ERROR DE CONEXIÓN\n\n' +
+                      'Verifica que:\n' +
+                      '1. Hayas IMPLEMENTADO el script (no solo guardado)\n' +
+                      '2. La implementación sea tipo "Aplicación web"\n' +
+                      '3. "Ejecutar como" sea "Yo"\n' +
+                      '4. "Acceso" sea "Cualquier persona"\n' +
+                      '5. La URL termine en /exec\n\n' +
+                      'Si ya lo hiciste todo, intenta crear una NUEVA implementación.');
+            } finally {
+                testBtn.disabled = false;
+                testBtn.textContent = '💾 Guardar y Probar Conexión';
+            }
+        }
+
+        async function initializeRemoteDatabase() {
+            try {
+                console.log('📡 Inicializando base de datos...');
+                
+                const response = await fetch(SHEETS_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({ action: 'initialize' })
+                });
+
+                console.log('📥 Respuesta recibida:', response.status);
+
+                if (!response.ok) {
+                    console.error('❌ Respuesta no OK:', response.status);
+                    return false;
+                }
+
+                const text = await response.text();
+                console.log('📄 Texto de respuesta:', text);
+                
+                const result = JSON.parse(text);
+                console.log('✅ Resultado:', result);
+                
+                return result.status === 'success';
+            } catch (error) {
+                console.error('❌ Error:', error);
+                return false;
+            }
+        }
+
+        async function syncToSheets() {
+            if (!SHEETS_URL) {
+                alert('⚠️ Primero configura la conexión con Google Sheets');
+                openSheetsConfig();
+                return;
+            }
+
+            const todaySales = sales.filter(s => isToday(s.timestamp));
+            if (todaySales.length === 0) {
+                alert('ℹ️ No hay ventas para guardar');
+                return;
+            }
+
+            const btn = document.getElementById('btnSyncSheets');
+            const originalText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '⏳ Guardando...';
+
+            try {
+                console.log('📤 Enviando', todaySales.length, 'ventas...');
+                
+                const response = await fetch(SHEETS_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({
+                        action: 'save_sales',
+                        sales: todaySales
+                    })
+                });
+
+                console.log('📥 Respuesta:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const text = await response.text();
+                console.log('📄 Respuesta texto:', text);
+                
+                const result = JSON.parse(text);
+                console.log('✅ Resultado:', result);
+                
+                if (result.status === 'success') {
+                    const totalIngresos = todaySales.reduce((sum, s) => sum + s.amount, 0);
+                    alert('✅ ¡DATOS GUARDADOS EXITOSAMENTE!\n\n' + 
+                          `📊 Registros guardados: ${result.data.ventas}\n` +
+                          `🎱 Sesiones de mesas: ${result.data.mesas}\n` +
+                          `🛒 Productos vendidos: ${result.data.productos}\n` +
+                          `💰 Total ingresos: $${totalIngresos.toLocaleString('es-CO')}\n\n` +
+                          `Ve a tu Google Sheet para ver toda la información organizada.`);
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('❌ ERROR AL GUARDAR\n\n' +
+                      'Error: ' + error.message + '\n\n' +
+                      'Posibles soluciones:\n' +
+                      '• Verifica que la URL sea correcta\n' +
+                      '• Crea una NUEVA implementación\n' +
+                      '• Revisa los permisos del script\n' +
+                      '• Mira la consola (F12) para más detalles');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            }
+        }
+
+        // ========================================
+        // MESAS
+        // ========================================
+
+        function initTables() {
+            tables = [];
+            for (let i = 1; i <= NUM_TABLES; i++) {
+                tables.push({
+                    id: i,
+                    occupied: false,
+                    startTime: null,
+                    customers: [],
+                    elapsedTime: 0
+                });
+            }
+            renderTables();
+            renderProductSelect();
+        }
+
+        function renderTables() {
+            const grid = document.getElementById('tablesGrid');
+            grid.innerHTML = tables.map(table => `
+                <div class="table-item ${table.occupied ? 'occupied' : ''}" data-table-id="${table.id}">
+                    <div class="table-number">Mesa ${table.id}</div>
+                    <div class="table-status">${table.occupied ? 'Ocupada' : 'Disponible'}</div>
+                    ${table.occupied ? `<div class="table-time" id="time-${table.id}">00:00:00</div>` : ''}
+                </div>
+            `).join('');
+            
+            // Agregar event listeners a cada mesa
+            document.querySelectorAll('.table-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const tableId = parseInt(this.getAttribute('data-table-id'));
+                    openTableModal(tableId);
+                });
+            });
+            
+            updateStats();
+        }
+
+        function openTableModal(tableId) {
+            const table = tables.find(t => t.id === tableId);
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = `Mesa ${tableId}`;
+
+            if (!table.occupied) {
+                body.innerHTML = `
+                    <p style="margin-bottom: 20px; color: #666;">
+                        Mesa disponible. ¿Iniciar sesión?
+                    </p>
+                    <button class="btn btn-primary" id="btnStartTable">Iniciar Mesa</button>
+                    <button class="btn btn-danger" id="btnCancelTable">Cancelar</button>
+                `;
+                
+                document.getElementById('btnStartTable').addEventListener('click', () => startTable(tableId));
+                document.getElementById('btnCancelTable').addEventListener('click', closeModal);
+            } else {
+                const elapsed = getElapsedTime(table.startTime);
+                const tableCost = calculateCost(elapsed);
+                
+                let totalProducts = 0;
+                table.customers.forEach(customer => {
+                    customer.products.forEach(product => {
+                        totalProducts += product.total;
+                    });
+                });
+                
+                const grandTotal = tableCost + totalProducts;
+                
+                body.innerHTML = `
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                        <p><strong>⏱️ Tiempo:</strong> ${formatTime(elapsed)}</p>
+                        <p><strong>💵 Costo Mesa:</strong> $${tableCost.toLocaleString('es-CO')}</p>
+                        <p><strong>🛒 Productos:</strong> $${totalProducts.toLocaleString('es-CO')}</p>
+                        <p style="font-size: 1.3em; color: #667eea; font-weight: bold; margin-top: 10px;">
+                            <strong>TOTAL:</strong> $${grandTotal.toLocaleString('es-CO')}
+                        </p>
+                    </div>
+
+                    <div id="customersList">${renderCustomersList(table)}</div>
+
+                    ${table.customers.length < 4 ? `
+                        <button class="btn btn-primary" id="btnAddCustomer" style="width: 100%; margin-top: 15px;">
+                            ➕ Agregar Cliente (${table.customers.length}/4)
+                        </button>
+                    ` : ''}
+
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                        <button class="btn btn-success" id="btnEndTable" style="width: 100%; margin-bottom: 10px;">
+                            ✓ Finalizar y Cobrar
+                        </button>
+                        <button class="btn btn-danger" id="btnCloseTableModal">Cerrar</button>
+                    </div>
+                `;
+                
+                if (table.customers.length < 4) {
+                    document.getElementById('btnAddCustomer').addEventListener('click', () => addCustomerToTable(tableId));
+                }
+                document.getElementById('btnEndTable').addEventListener('click', () => endTable(tableId));
+                document.getElementById('btnCloseTableModal').addEventListener('click', closeModal);
+            }
+
+            modal.classList.add('active');
+        }
+
+        function renderCustomersList(table) {
+            if (table.customers.length === 0) {
+                return '<p style="text-align: center; color: #999; padding: 20px;">No hay clientes. Agrega el primero.</p>';
+            }
+
+            return table.customers.map((customer, idx) => {
+                const customerTotal = customer.products.reduce((sum, p) => sum + p.total, 0);
+                return `
+                    <div style="background: white; border: 2px solid #e0e0e0; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="color: #667eea; margin: 0;">
+                                👤 ${customer.name || `Cliente ${idx + 1}`}
+                            </h3>
+                            <button class="btn btn-danger btn-remove-customer" data-table-id="${table.id}" data-customer-idx="${idx}" style="padding: 5px 10px; font-size: 0.85em;">✕</button>
+                        </div>
+                        
+                        ${customer.products.length > 0 ? `
+                            <div style="margin-bottom: 10px;">
+                                ${customer.products.map((product, pIdx) => `
+                                    <div style="display: flex; justify-content: space-between; padding: 8px; background: #f8f9fa; border-radius: 6px; margin-bottom: 5px;">
+                                        <span>${product.name} x${product.quantity}</span>
+                                        <div>
+                                            <strong style="color: #667eea;">${product.total.toLocaleString('es-CO')}</strong>
+                                            <button class="btn-remove-product" data-table-id="${table.id}" data-customer-idx="${idx}" data-product-idx="${pIdx}" style="background: none; border: none; color: #f5576c; cursor: pointer; margin-left: 10px; font-weight: bold;">✕</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : '<p style="color: #999; font-size: 0.9em;">Sin productos</p>'}
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                            <strong>Subtotal:</strong>
+                            <strong style="color: #667eea; font-size: 1.2em;">${customerTotal.toLocaleString('es-CO')}</strong>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-add-product" data-table-id="${table.id}" data-customer-idx="${idx}" style="width: 100%; margin-top: 10px; padding: 8px;">
+                            🛒 Agregar Producto
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function attachCustomerListeners() {
+            // Remover clientes
+            document.querySelectorAll('.btn-remove-customer').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tableId = parseInt(this.getAttribute('data-table-id'));
+                    const customerIdx = parseInt(this.getAttribute('data-customer-idx'));
+                    removeCustomer(tableId, customerIdx);
+                });
+            });
+
+            // Agregar productos
+            document.querySelectorAll('.btn-add-product').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tableId = parseInt(this.getAttribute('data-table-id'));
+                    const customerIdx = parseInt(this.getAttribute('data-customer-idx'));
+                    addProductToCustomer(tableId, customerIdx);
+                });
+            });
+
+            // Remover productos
+            document.querySelectorAll('.btn-remove-product').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tableId = parseInt(this.getAttribute('data-table-id'));
+                    const customerIdx = parseInt(this.getAttribute('data-customer-idx'));
+                    const productIdx = parseInt(this.getAttribute('data-product-idx'));
+                    removeProduct(tableId, customerIdx, productIdx);
+                });
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('tableModal').classList.remove('active');
+        }
+
+        function startTable(tableId) {
+            const table = tables.find(t => t.id === tableId);
+            table.occupied = true;
+            table.startTime = Date.now();
+            table.customers = [];
+            
+            activeIntervals[tableId] = setInterval(() => {
+                updateTableTime(tableId);
+            }, 1000);
+
+            closeModal();
+            renderTables();
+            setTimeout(() => openTableModal(tableId), 300);
+        }
+
+        function addCustomerToTable(tableId) {
+            const table = tables.find(t => t.id === tableId);
+            
+            if (table.customers.length >= 4) {
+                alert('No puedes agregar más de 4 clientes por mesa');
+                return;
+            }
+
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = '➕ Agregar Cliente';
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Nombre del Cliente (opcional)</label>
+                    <input type="text" id="customerNameInput" placeholder="Ej: Pedro, María, Juan..." autofocus>
+                </div>
+                <p style="color: #999; font-size: 0.9em; margin-bottom: 20px;">
+                    💡 Puedes dejar el nombre vacío
+                </p>
+                <button class="btn btn-primary" id="btnConfirmAddCustomer">Agregar Cliente</button>
+                <button class="btn btn-danger" id="btnCancelAddCustomer">Cancelar</button>
+            `;
+
+            document.getElementById('btnConfirmAddCustomer').addEventListener('click', () => confirmAddCustomer(tableId));
+            document.getElementById('btnCancelAddCustomer').addEventListener('click', () => openTableModal(tableId));
+
+            setTimeout(() => {
+                const input = document.getElementById('customerNameInput');
+                input.focus();
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') confirmAddCustomer(tableId);
+                });
+            }, 100);
+        }
+
+        function confirmAddCustomer(tableId) {
+            const name = document.getElementById('customerNameInput').value.trim();
+            const table = tables.find(t => t.id === tableId);
+            table.customers.push({ name: name || '', products: [] });
+            openTableModal(tableId);
+            setTimeout(attachCustomerListeners, 100);
+        }
+
+        function removeCustomer(tableId, customerIdx) {
+            if (!confirm('¿Eliminar este cliente y sus productos?')) return;
+            const table = tables.find(t => t.id === tableId);
+            table.customers.splice(customerIdx, 1);
+            openTableModal(tableId);
+            setTimeout(attachCustomerListeners, 100);
+        }
+
+        function addProductToCustomer(tableId, customerIdx) {
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            const table = tables.find(t => t.id === tableId);
+            const customer = table.customers[customerIdx];
+
+            title.textContent = `Agregar Producto - ${customer.name || `Cliente ${customerIdx + 1}`}`;
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Producto</label>
+                    <select id="productSelectModal">
+                        <option value="">Seleccionar producto</option>
+                        ${products.map(p => 
+                            `<option value="${p.name}|${p.price}">${p.name} - ${p.price.toLocaleString('es-CO')}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cantidad</label>
+                    <input type="number" id="productQuantityModal" value="1" min="1">
+                </div>
+                <button class="btn btn-primary" id="btnConfirmAddProduct">Agregar</button>
+                <button class="btn btn-danger" id="btnCancelAddProduct">Volver</button>
+            `;
+
+            document.getElementById('btnConfirmAddProduct').addEventListener('click', () => confirmAddProduct(tableId, customerIdx));
+            document.getElementById('btnCancelAddProduct').addEventListener('click', () => {
+                openTableModal(tableId);
+                setTimeout(attachCustomerListeners, 100);
+            });
+        }
+
+        function confirmAddProduct(tableId, customerIdx) {
+            const select = document.getElementById('productSelectModal');
+            const quantity = parseInt(document.getElementById('productQuantityModal').value);
+            
+            if (!select.value || quantity < 1) {
+                alert('Selecciona un producto y cantidad válida');
+                return;
+            }
+
+            const [productName, price] = select.value.split('|');
+            const table = tables.find(t => t.id === tableId);
+            const customer = table.customers[customerIdx];
+
+            customer.products.push({
+                name: productName,
+                price: parseInt(price),
+                quantity: quantity,
+                total: parseInt(price) * quantity
+            });
+
+            openTableModal(tableId);
+            setTimeout(attachCustomerListeners, 100);
+        }
+
+        function removeProduct(tableId, customerIdx, productIdx) {
+            const table = tables.find(t => t.id === tableId);
+            table.customers[customerIdx].products.splice(productIdx, 1);
+            openTableModal(tableId);
+            setTimeout(attachCustomerListeners, 100);
+        }
+
+        function updateTableTime(tableId) {
+            const table = tables.find(t => t.id === tableId);
+            if (table && table.occupied) {
+                const elapsed = getElapsedTime(table.startTime);
+                const element = document.getElementById(`time-${tableId}`);
+                if (element) element.textContent = formatTime(elapsed);
+            }
+        }
+
+        function endTable(tableId) {
+            const table = tables.find(t => t.id === tableId);
+            const elapsed = getElapsedTime(table.startTime);
+            const tableCost = calculateCost(elapsed);
+
+            let productsTotal = 0;
+            table.customers.forEach(customer => {
+                customer.products.forEach(product => {
+                    productsTotal += product.total;
+                });
+            });
+
+            const grandTotal = tableCost + productsTotal;
+
+            sales.push({
+                type: 'Mesa',
+                item: `Mesa ${tableId}`,
+                customers: table.customers.map((c, idx) => ({
+                    name: c.name || `Cliente ${idx + 1}`,
+                    products: c.products,
+                    total: c.products.reduce((sum, p) => sum + p.total, 0)
+                })),
+                time: formatTime(elapsed),
+                tableCost: tableCost,
+                productsTotal: productsTotal,
+                amount: grandTotal,
+                timestamp: new Date()
+            });
+
+            clearInterval(activeIntervals[tableId]);
+            delete activeIntervals[tableId];
+
+            table.occupied = false;
+            table.startTime = null;
+            table.customers = [];
+            table.elapsedTime = 0;
+
+            closeModal();
+            renderTables();
+            renderSalesHistory();
+        }
+
+        // ========================================
+        // VENTAS RÁPIDAS
+        // ========================================
+
+        function renderProductSelect() {
+            const select = document.getElementById('productSelect');
+            select.innerHTML = '<option value="">Seleccionar producto</option>' +
+                products.map(p => 
+                    `<option value="${p.name}|${p.price}">${p.name} - ${p.price.toLocaleString('es-CO')}</option>`
+                ).join('');
+        }
+
+        function addQuickSale() {
+            const select = document.getElementById('productSelect');
+            const quantity = parseInt(document.getElementById('productQuantity').value);
+            
+            if (!select.value || quantity < 1) {
+                alert('Por favor selecciona un producto y cantidad válida');
+                return;
+            }
+
+            const [product, price] = select.value.split('|');
+            const total = parseInt(price) * quantity;
+
+            sales.push({
+                type: 'Venta',
+                item: `${product} x${quantity}`,
+                amount: total,
+                timestamp: new Date()
+            });
+
+            select.value = '';
+            document.getElementById('productQuantity').value = '1';
+            renderSalesHistory();
+            updateStats();
+            
+            // Mensaje de confirmación
+            showNotification(`✓ ${product} agregado`);
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #43e97b; color: white; padding: 15px 25px; border-radius: 8px; font-weight: bold; z-index: 10000; animation: slideIn 0.3s ease;';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 2000);
+        }
+
+        // ========================================
+        // HISTORIAL
+        // ========================================
+
+        function renderSalesHistory() {
+            const history = document.getElementById('salesHistory');
+            const todaySales = sales.filter(s => isToday(s.timestamp));
+            
+            if (todaySales.length === 0) {
+                history.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay ventas registradas hoy</p>';
+                return;
+            }
+
+            history.innerHTML = todaySales.slice().reverse().map(sale => {
+                if (sale.type === 'Mesa') {
+                    return `
+                        <div class="history-item" style="flex-direction: column; align-items: flex-start;">
+                            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <div>
+                                    <strong style="font-size: 1.1em;">${sale.item}</strong>
+                                    <br><small>${sale.timestamp.toLocaleTimeString('es-CO')} • Tiempo: ${sale.time}</small>
+                                </div>
+                                <div class="history-amount">${sale.amount.toLocaleString('es-CO')}</div>
+                            </div>
+                            
+                            ${sale.customers && sale.customers.length > 0 ? `
+                                <div style="width: 100%; background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 5px;">
+                                    <strong style="font-size: 0.9em; color: #667eea;">Detalles:</strong>
+                                    ${sale.customers.map(customer => `
+                                        <div style="margin-top: 8px; padding: 8px; background: white; border-radius: 6px;">
+                                            <div style="font-weight: 600; color: #333;">👤 ${customer.name}</div>
+                                            ${customer.products.length > 0 ? `
+                                                <div style="margin-top: 5px; font-size: 0.85em;">
+                                                    ${customer.products.map(p => 
+                                                        `<div style="color: #666;">• ${p.name} x${p.quantity} - ${p.total.toLocaleString('es-CO')}</div>`
+                                                    ).join('')}
+                                                </div>
+                                                <div style="margin-top: 5px; font-weight: 600; color: #667eea;">
+                                                    Subtotal: ${customer.total.toLocaleString('es-CO')}
+                                                </div>
+                                            ` : '<div style="font-size: 0.85em; color: #999;">Sin productos</div>'}
+                                        </div>
+                                    `).join('')}
+                                    <div style="margin-top: 10px; padding-top: 8px; border-top: 2px solid #e0e0e0; font-size: 0.9em;">
+                                        <div>💵 Mesa: ${sale.tableCost.toLocaleString('es-CO')}</div>
+                                        <div>🛒 Productos: ${sale.productsTotal.toLocaleString('es-CO')}</div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="history-item" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${sale.item}</strong>
+                                <br><small>${sale.timestamp.toLocaleTimeString('es-CO')}</small>
+                            </div>
+                            <div class="history-amount">${sale.amount.toLocaleString('es-CO')}</div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function clearHistory() {
+            if (confirm('¿Estás seguro de limpiar todo el historial de hoy?\n\n⚠️ Esta acción no se puede deshacer.')) {
+                sales = [];
+                renderSalesHistory();
+                updateStats();
+                alert('✓ Historial limpiado');
+            }
+        }
+
+        function exportReport() {
+            const todaySales = sales.filter(s => isToday(s.timestamp));
+            
+            if (todaySales.length === 0) {
+                alert('ℹ️ No hay ventas para exportar');
+                return;
+            }
+            
+            const totalRevenue = todaySales.reduce((sum, s) => sum + s.amount, 0);
+            
+            let report = `REPORTE DE VENTAS - ${new Date().toLocaleDateString('es-CO')}\n`;
+            report += `${'='.repeat(60)}\n\n`;
+            report += `Total de Ventas: ${todaySales.length}\n`;
+            report += `Ingresos Totales: ${totalRevenue.toLocaleString('es-CO')}\n\n`;
+            report += `DETALLE DE VENTAS:\n`;
+            report += `${'-'.repeat(60)}\n`;
+            
+            todaySales.forEach((sale, idx) => {
+                report += `\n${idx + 1}. ${sale.item}\n`;
+                report += `   Tipo: ${sale.type}\n`;
+                if (sale.time) report += `   Tiempo: ${sale.time}\n`;
+                report += `   Monto: ${sale.amount.toLocaleString('es-CO')}\n`;
+                report += `   Hora: ${sale.timestamp.toLocaleTimeString('es-CO')}\n`;
+                
+                if (sale.customers && sale.customers.length > 0) {
+                    report += `   Clientes:\n`;
+                    sale.customers.forEach(customer => {
+                        report += `     - ${customer.name}: ${customer.total.toLocaleString('es-CO')}\n`;
+                        if (customer.products.length > 0) {
+                            customer.products.forEach(p => {
+                                report += `       • ${p.name} x${p.quantity}\n`;
+                            });
+                        }
+                    });
+                }
+            });
+
+            const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reporte_billar_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('✓ Reporte exportado');
+        }
+
+        // ========================================
+        // ESTADÍSTICAS
+        // ========================================
+
+        function updateStats() {
+            const activeTables = tables.filter(t => t.occupied).length;
+            const todaySales = sales.filter(s => isToday(s.timestamp));
+            const totalRevenue = todaySales.reduce((sum, s) => sum + s.amount, 0);
+
+            document.getElementById('activeTables').textContent = activeTables;
+            document.getElementById('totalRevenue').textContent = `${totalRevenue.toLocaleString('es-CO')}`;
+            document.getElementById('totalSessions').textContent = todaySales.length;
+        }
+
+        // ========================================
+        // CONFIGURACIÓN - PRODUCTOS
+        // ========================================
+
+        function openSettingsModal() {
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = 'Gestionar Productos';
+            body.innerHTML = `
+                <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">
+                    <div id="productList"></div>
+                </div>
+                <div style="padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                    <h3 style="margin-bottom: 15px;">➕ Agregar Nuevo Producto</h3>
+                    <div class="form-group">
+                        <label>Nombre del Producto</label>
+                        <input type="text" id="newProductName" placeholder="Ej: Pizza, Hamburguesa">
+                    </div>
+                    <div class="form-group">
+                        <label>Precio ($)</label>
+                        <input type="number" id="newProductPrice" placeholder="0" min="0" step="500">
+                    </div>
+                    <button class="btn btn-primary" id="btnAddNewProduct">Agregar</button>
+                    <button class="btn btn-danger" id="btnCloseProductsModal">Cerrar</button>
+                </div>
+            `;
+            
+            renderProductList();
+            modal.classList.add('active');
+            
+            document.getElementById('btnAddNewProduct').addEventListener('click', addProduct);
+            document.getElementById('btnCloseProductsModal').addEventListener('click', closeModal);
+        }
+
+        function renderProductList() {
+            const list = document.getElementById('productList');
+            if (products.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay productos. Agrega el primero.</p>';
+                return;
+            }
+            
+            list.innerHTML = products.map((p, idx) => `
+                <div class="product-item">
+                    <div>
+                        <strong>${p.name}</strong><br>
+                        <span style="color: #667eea; font-weight: 600;">${p.price.toLocaleString('es-CO')}</span>
+                    </div>
+                    <button class="btn btn-danger btn-delete-product" data-product-idx="${idx}" style="padding: 8px 15px; font-size: 0.9em;">Eliminar</button>
+                </div>
+            `).join('');
+            
+            // Agregar event listeners
+            document.querySelectorAll('.btn-delete-product').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.getAttribute('data-product-idx'));
+                    deleteProduct(idx);
+                });
+            });
+        }
+
+        function addProduct() {
+            const name = document.getElementById('newProductName').value.trim();
+            const price = parseInt(document.getElementById('newProductPrice').value);
+
+            if (!name || !price || price < 0) {
+                alert('Por favor ingresa un nombre y precio válidos');
+                return;
+            }
+
+            products.push({ name, price });
+            saveConfig();
+            renderProductList();
+            renderProductSelect();
+            document.getElementById('newProductName').value = '';
+            document.getElementById('newProductPrice').value = '';
+            
+            showNotification(`✓ ${name} agregado`);
+        }
+
+        function deleteProduct(index) {
+            const product = products[index];
+            if (confirm(`¿Eliminar "${product.name}"?`)) {
+                products.splice(index, 1);
+                saveConfig();
+                renderProductList();
+                renderProductSelect();
+                showNotification(`✓ ${product.name} eliminado`);
+            }
+        }
+
+        // ========================================
+        // CONFIGURACIÓN - MESAS
+        // ========================================
+
+        function openTablesConfig() {
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = 'Configurar Mesas';
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Número de Mesas</label>
+                    <input type="number" id="numTablesInput" value="${NUM_TABLES}" min="1" max="20">
+                </div>
+                <p style="color: #999; font-size: 0.9em; margin-bottom: 20px;">
+                    ⚠️ Al cambiar el número de mesas, se reiniciará el sistema
+                </p>
+                <button class="btn btn-primary" id="btnUpdateTables">Guardar Cambios</button>
+                <button class="btn btn-danger" id="btnCancelTables">Cancelar</button>
+            `;
+            modal.classList.add('active');
+            
+            document.getElementById('btnUpdateTables').addEventListener('click', updateNumTables);
+            document.getElementById('btnCancelTables').addEventListener('click', closeModal);
+        }
+
+        function updateNumTables() {
+            const newNum = parseInt(document.getElementById('numTablesInput').value);
+            if (newNum < 1 || newNum > 20) {
+                alert('El número de mesas debe estar entre 1 y 20');
+                return;
+            }
+
+            if (confirm('¿Estás seguro? Esto reiniciará todas las mesas activas.')) {
+                Object.keys(activeIntervals).forEach(key => {
+                    clearInterval(activeIntervals[key]);
+                });
+                activeIntervals = {};
+                NUM_TABLES = newNum;
+                saveConfig();
+                initTables();
+                closeModal();
+                showNotification(`✓ Ahora tienes ${newNum} mesas`);
+            }
+        }
+
+        // ========================================
+        // CONFIGURACIÓN - PRECIOS
+        // ========================================
+
+        function openPriceConfig() {
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = 'Configurar Precios';
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Precio por Hora de Mesa ($)</label>
+                    <input type="number" id="hourlyRateInput" value="${HOURLY_RATE}" min="0" step="1000">
+                </div>
+                <p style="color: #999; font-size: 0.9em; margin-bottom: 20px;">
+                    💡 Precio actual: ${HOURLY_RATE.toLocaleString('es-CO')}/hora
+                </p>
+                <button class="btn btn-primary" id="btnUpdatePrice">Guardar Cambios</button>
+                <button class="btn btn-danger" id="btnCancelPrice">Cancelar</button>
+            `;
+            modal.classList.add('active');
+            
+            document.getElementById('btnUpdatePrice').addEventListener('click', updateHourlyRate);
+            document.getElementById('btnCancelPrice').addEventListener('click', closeModal);
+        }
+
+        function updateHourlyRate() {
+            const newRate = parseInt(document.getElementById('hourlyRateInput').value);
+            if (newRate < 0) {
+                alert('El precio debe ser positivo');
+                return;
+            }
+            HOURLY_RATE = newRate;
+            saveConfig();
+            closeModal();
+            showNotification(`✓ Precio: ${HOURLY_RATE.toLocaleString('es-CO')}/hora`);
+        }
+
+        // ========================================
+        // UTILIDADES
+        // ========================================
+
+        function getElapsedTime(startTime) {
+            return Date.now() - startTime;
+        }
+
+        function formatTime(ms) {
+            const seconds = Math.floor((ms / 1000) % 60);
+            const minutes = Math.floor((ms / (1000 * 60)) % 60);
+            const hours = Math.floor(ms / (1000 * 60 * 60));
+            return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        }
+
+        function pad(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        function calculateCost(ms) {
+            const hours = ms / (1000 * 60 * 60);
+            return Math.ceil(hours * HOURLY_RATE / 1000) * 1000;
+        }
+
+        function isToday(date) {
+            const today = new Date();
+            return date.getDate() === today.getDate() &&
+                   date.getMonth() === today.getMonth() &&
+                   date.getFullYear() === today.getFullYear();
+        }
+
+        // Cerrar modal al hacer click fuera
+        document.getElementById('tableModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ========================================
+        // EVENT LISTENERS PRINCIPALES
+        // ========================================
+
+        document.getElementById('btnQuickSale').addEventListener('click', addQuickSale);
+        document.getElementById('btnConfigSheets').addEventListener('click', openSheetsConfig);
+        document.getElementById('btnManageProducts').addEventListener('click', openSettingsModal);
+        document.getElementById('btnConfigTables').addEventListener('click', openTablesConfig);
+        document.getElementById('btnConfigPrices').addEventListener('click', openPriceConfig);
+        document.getElementById('btnSyncSheets').addEventListener('click', syncToSheets);
+        document.getElementById('btnClearHistory').addEventListener('click', clearHistory);
+        document.getElementById('btnExportReport').addEventListener('click', exportReport);
+
+        // ========================================
+        // INICIALIZACIÓN
+        // ========================================
+
+        loadConfig();
+        initTables();
+        
+        console.log('🎱 Sistema de Billar cargado correctamente');
+        console.log('📊 Mesas:', NUM_TABLES);
+        console.log('💰 Precio/hora:', HOURLY_RATE);
+        console.log('🛒 Productos:', products.length);
+    </script>
+</body>
+</html>
