@@ -18,9 +18,84 @@
             padding: 20px;
         }
 
+        /* LOGIN SCREEN */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-screen.hidden {
+            display: none;
+        }
+
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 90%;
+            animation: slideIn 0.5s ease;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+        }
+
+        .user-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .user-badge.admin {
+            background: #ffa726;
+            color: white;
+        }
+
+        .user-badge.employee {
+            background: #43e97b;
+            color: white;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            display: none;
+        }
+
+        .container.active {
+            display: block;
         }
 
         .header {
@@ -29,13 +104,19 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             margin-bottom: 30px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .header h1 {
+        .header-left h1 {
             color: #667eea;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .header-right {
+            text-align: right;
         }
 
         .connection-status {
@@ -180,6 +261,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-right: 10px;
+            margin-bottom: 10px;
         }
 
         .btn-primary {
@@ -216,6 +298,12 @@
             opacity: 0.6;
             cursor: not-allowed;
             transform: none !important;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            color: white;
+            padding: 10px 20px;
         }
 
         .modal {
@@ -339,17 +427,41 @@
             border: 1px solid #ffeaa7;
         }
 
-        .code-box {
-            background: #2d2d2d;
-            color: #f8f8f2;
-            border-radius: 8px;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85em;
-            overflow-x: auto;
-            margin: 15px 0;
-            max-height: 400px;
-            overflow-y: auto;
+        .admin-only {
+            display: none;
+        }
+
+        .admin-only.visible {
+            display: block;
+        }
+
+        .sync-indicator {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #43e97b;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
+            z-index: 999;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+
+        .sync-indicator.syncing {
+            display: block;
+            background: #ffa726;
+        }
+
+        .sync-indicator.success {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         @media (max-width: 768px) {
@@ -360,16 +472,64 @@
             .table-grid {
                 grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-right {
+                text-align: center;
+                margin-top: 15px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">🎱</div>
+                <h1>Sistema de Billar</h1>
+                <p>Ingresa tus credenciales</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" id="loginUsername" placeholder="admin o empleado">
+            </div>
+            
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="loginPassword" placeholder="••••••••">
+            </div>
+            
+            <button class="btn btn-primary" id="btnLogin" style="width: 100%; margin: 0;">
+                Iniciar Sesión
+            </button>
+
+            <div class="alert alert-info" style="margin-top: 20px; font-size: 0.9em;">
+                <strong>Credenciales por defecto:</strong><br>
+                👤 Admin: <code>admin</code> / <code>admin123</code><br>
+                👤 Empleado: <code>empleado</code> / <code>emp123</code>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="container" id="mainApp">
         <div class="header">
-            <h1>🎱 Sistema de Gestión para Billar</h1>
-            <p>Gestión profesional con INNOVASOFT</p>
-            <div id="connectionStatus" class="connection-status disconnected">
-                ⚠️ No Configurado
+            <div class="header-left">
+                <h1>🎱 Sistema de Gestión para Billar</h1>
+                <p>Usuario: <strong id="currentUser"></strong><span id="userBadge" class="user-badge"></span></p>
+            </div>
+            <div class="header-right">
+                <div id="connectionStatus" class="connection-status disconnected">
+                    ⚠️ No Configurado
+                </div>
+                <br>
+                <button class="btn btn-logout" id="btnLogout">🚪 Cerrar Sesión</button>
             </div>
         </div>
 
@@ -424,40 +584,40 @@
                 <button class="btn btn-success" id="btnQuickSale">Agregar Venta</button>
             </div>
 
-            <!-- Configuración -->
-            <div class="card">
+            <!-- Configuración (Solo Admin) -->
+            <div class="card admin-only" id="configCard">
                 <div class="card-header">
                     <div class="card-icon">⚙️</div>
                     <div class="card-title">Configuración</div>
                 </div>
-                <button class="btn btn-primary" id="btnConfigSheets" style="width: 100%; margin-bottom: 10px;">
+                <button class="btn btn-primary" id="btnConfigSheets" style="width: 100%;">
                     🔗 Configurar Google Sheets
                 </button>
-                <button class="btn btn-primary" id="btnManageProducts" style="width: 100%; margin-bottom: 10px;">
+                <button class="btn btn-primary" id="btnManageProducts" style="width: 100%;">
                     Gestionar Productos
                 </button>
-                <button class="btn btn-primary" id="btnConfigTables" style="width: 100%; margin-bottom: 10px;">
+                <button class="btn btn-primary" id="btnConfigTables" style="width: 100%;">
                     Configurar Mesas
                 </button>
                 <button class="btn btn-primary" id="btnConfigPrices" style="width: 100%;">
                     Configurar Precios
                 </button>
+                <button class="btn btn-primary" id="btnManageUsers" style="width: 100%;">
+                    Gestionar Usuarios
+                </button>
             </div>
         </div>
 
-        <!-- Historial de Ventas -->
-        <div class="card">
+        <!-- Historial de Ventas (Solo Admin) -->
+        <div class="card admin-only">
             <div class="card-header">
                 <div class="card-icon">📝</div>
                 <div class="card-title">Historial de Hoy</div>
             </div>
-            <button class="btn btn-success" id="btnSyncSheets" style="margin-bottom: 15px;">
-                ☁️ Guardar en Google Sheets
-            </button>
-            <button class="btn btn-danger" id="btnClearHistory" style="margin-bottom: 15px;">
+            <button class="btn btn-danger" id="btnClearHistory">
                 Limpiar Historial
             </button>
-            <button class="btn btn-primary" id="btnExportReport" style="margin-bottom: 15px;">
+            <button class="btn btn-primary" id="btnExportReport">
                 📄 Exportar Reporte
             </button>
             <div id="salesHistory"></div>
@@ -472,8 +632,97 @@
         </div>
     </div>
 
+    <!-- Sync Indicator -->
+    <div class="sync-indicator" id="syncIndicator">
+        ☁️ Guardando...
+    </div>
+
     <script>
-        // Variables globales
+        // ========================================
+        // SISTEMA DE AUTENTICACIÓN
+        // ========================================
+
+        const USERS = {
+            admin: { password: 'admin123', role: 'admin', name: 'Administrador' },
+            empleado: { password: 'emp123', role: 'employee', name: 'Empleado' }
+        };
+
+        let currentUser = null;
+
+        function initAuth() {
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showMainApp();
+            } else {
+                showLoginScreen();
+            }
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainApp').classList.remove('active');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('active');
+            document.getElementById('currentUser').textContent = currentUser.name;
+            
+            const badge = document.getElementById('userBadge');
+            badge.textContent = currentUser.role === 'admin' ? '👑 Admin' : '👤 Empleado';
+            badge.className = 'user-badge ' + currentUser.role;
+
+            // Mostrar/ocultar elementos según rol
+            if (currentUser.role === 'admin') {
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.classList.add('visible');
+                });
+            }
+
+            loadTables();
+            loadConfig();
+            renderTables();
+            renderSalesHistory();
+        }
+
+        document.getElementById('btnLogin').addEventListener('click', function() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (USERS[username] && USERS[username].password === password) {
+                currentUser = {
+                    username: username,
+                    role: USERS[username].role,
+                    name: USERS[username].name
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                showMainApp();
+            } else {
+                alert('❌ Usuario o contraseña incorrectos');
+            }
+        });
+
+        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('btnLogin').click();
+            }
+        });
+
+        document.getElementById('btnLogout').addEventListener('click', function() {
+            if (confirm('¿Cerrar sesión?')) {
+                localStorage.removeItem('currentUser');
+                currentUser = null;
+                showLoginScreen();
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+            }
+        });
+
+        // ========================================
+        // VARIABLES GLOBALES
+        // ========================================
+
         let tables = [];
         let sales = [];
         let activeIntervals = {};
@@ -492,6 +741,46 @@
         ];
 
         // ========================================
+        // PERSISTENCIA DE DATOS
+        // ========================================
+
+        function saveTables() {
+            localStorage.setItem('tables', JSON.stringify(tables));
+        }
+
+        function loadTables() {
+            const saved = localStorage.getItem('tables');
+            if (saved) {
+                tables = JSON.parse(saved);
+                // Reiniciar intervalos para mesas ocupadas
+                tables.forEach(table => {
+                    if (table.occupied && table.startTime) {
+                        activeIntervals[table.id] = setInterval(() => {
+                            updateTableTime(table.id);
+                        }, 1000);
+                    }
+                });
+            } else {
+                initTables();
+            }
+        }
+
+        function saveSalesData() {
+            localStorage.setItem('sales', JSON.stringify(sales));
+        }
+
+        function loadSalesData() {
+            const saved = localStorage.getItem('sales');
+            if (saved) {
+                sales = JSON.parse(saved);
+                // Convertir strings de fecha a objetos Date
+                sales.forEach(sale => {
+                    sale.timestamp = new Date(sale.timestamp);
+                });
+            }
+        }
+
+        // ========================================
         // CONFIGURACIÓN
         // ========================================
         
@@ -508,6 +797,8 @@
                 SHEETS_URL = savedUrl;
                 updateConnectionStatus();
             }
+
+            loadSalesData();
         }
 
         function saveConfig() {
@@ -529,169 +820,34 @@
         }
 
         // ========================================
-        // GOOGLE SHEETS
+        // AUTO-GUARDADO EN GOOGLE SHEETS
         // ========================================
 
-        function openSheetsConfig() {
-            const modal = document.getElementById('tableModal');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
-
-            title.textContent = '🔗 Configurar Google Sheets';
-            body.innerHTML = `
-                <div class="alert alert-success">
-                    <strong>✓ 100% GRATIS</strong> - Sin costos, sin límites
-                </div>
-
-                <div class="alert alert-info" style="text-align: left;">
-                    <strong>📋 PASOS RÁPIDOS:</strong><br><br>
-                    1. Crea una Google Sheet<br>
-                    2. Ve a <strong>Extensiones → Apps Script</strong><br>
-                    3. Borra todo y pega el código Code.gs<br>
-                    4. Guarda (Ctrl + S)<br>
-                    5. <strong>Implementar → Nueva implementación</strong><br>
-                    6. Tipo: <strong>Aplicación web</strong><br>
-                    7. Ejecutar como: <strong>Yo</strong><br>
-                    8. Acceso: <strong>Cualquier persona</strong><br>
-                    9. <strong>Copia la URL (termina en /exec)</strong><br>
-                    10. Pégala abajo 👇
-                </div>
-
-                <div class="alert alert-warning" style="text-align: left;">
-                    <strong>⚠️ MUY IMPORTANTE:</strong><br>
-                    • La URL DEBE terminar en <strong>/exec</strong> (NO /dev)<br>
-                    • Si cambias el código, crea una <strong>NUEVA implementación</strong>
-                </div>
-
-                <div class="form-group">
-                    <label>URL del Apps Script (termina en /exec)</label>
-                    <input type="text" id="sheetsUrlInput" value="${SHEETS_URL}" 
-                           placeholder="https://script.google.com/macros/s/...../exec">
-                </div>
-
-                <button class="btn btn-success" id="btnSaveSheetsUrl">💾 Guardar y Probar Conexión</button>
-                <button class="btn btn-danger" id="btnCloseModal">Cancelar</button>
-            `;
-            modal.classList.add('active');
-
-            // Event listeners del modal
-            document.getElementById('btnSaveSheetsUrl').addEventListener('click', saveSheetsUrl);
-            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-        }
-
-        async function saveSheetsUrl() {
-            const url = document.getElementById('sheetsUrlInput').value.trim();
+        function showSyncIndicator(status) {
+            const indicator = document.getElementById('syncIndicator');
+            indicator.classList.remove('syncing', 'success');
             
-            if (!url) {
-                alert('⚠️ Por favor ingresa la URL del Apps Script');
-                return;
-            }
-
-            if (!url.includes('script.google.com')) {
-                alert('⚠️ La URL debe ser de Google Apps Script\n(debe contener script.google.com)');
-                return;
-            }
-
-            if (!url.endsWith('/exec')) {
-                alert('⚠️ La URL debe terminar en /exec\n\nTu URL termina en: ' + url.split('/').pop() + '\n\nAsegúrate de copiar la URL de la implementación, no del editor.');
-                return;
-            }
-
-            SHEETS_URL = url;
-            saveConfig();
-            updateConnectionStatus();
-
-            // Probar conexión e inicializar
-            const testBtn = document.getElementById('btnSaveSheetsUrl');
-            testBtn.disabled = true;
-            testBtn.textContent = '⏳ Probando conexión...';
-
-            try {
-                const initResult = await initializeRemoteDatabase();
-                
-                if (initResult) {
-                    alert('✅ ¡CONEXIÓN EXITOSA!\n\n' +
-                          '📊 Base de datos inicializada:\n' +
-                          '  • Hoja de Ventas\n' +
-                          '  • Historial de Mesas\n' +
-                          '  • Productos Vendidos\n' +
-                          '  • Resumen Diario\n' +
-                          '  • Configuración\n\n' +
-                          '🎉 ¡Ya puedes empezar a usar el sistema!');
-                    closeModal();
-                } else {
-                    throw new Error('No se pudo inicializar');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('❌ ERROR DE CONEXIÓN\n\n' +
-                      'Verifica que:\n' +
-                      '1. Hayas IMPLEMENTADO el script (no solo guardado)\n' +
-                      '2. La implementación sea tipo "Aplicación web"\n' +
-                      '3. "Ejecutar como" sea "Yo"\n' +
-                      '4. "Acceso" sea "Cualquier persona"\n' +
-                      '5. La URL termine en /exec\n\n' +
-                      'Si ya lo hiciste todo, intenta crear una NUEVA implementación.');
-            } finally {
-                testBtn.disabled = false;
-                testBtn.textContent = '💾 Guardar y Probar Conexión';
+            if (status === 'syncing') {
+                indicator.textContent = '☁️ Guardando...';
+                indicator.classList.add('syncing');
+            } else if (status === 'success') {
+                indicator.textContent = '✅ Guardado';
+                indicator.classList.add('success');
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                }, 3000);
             }
         }
 
-        async function initializeRemoteDatabase() {
-            try {
-                console.log('📡 Inicializando base de datos...');
-                
-                const response = await fetch(SHEETS_URL, {
-                    method: 'POST',
-                    redirect: 'follow',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
-                    body: JSON.stringify({ action: 'initialize' })
-                });
-
-                console.log('📥 Respuesta recibida:', response.status);
-
-                if (!response.ok) {
-                    console.error('❌ Respuesta no OK:', response.status);
-                    return false;
-                }
-
-                const text = await response.text();
-                console.log('📄 Texto de respuesta:', text);
-                
-                const result = JSON.parse(text);
-                console.log('✅ Resultado:', result);
-                
-                return result.status === 'success';
-            } catch (error) {
-                console.error('❌ Error:', error);
-                return false;
-            }
-        }
-
-        async function syncToSheets() {
+        async function autoSyncToSheets(saleData) {
             if (!SHEETS_URL) {
-                alert('⚠️ Primero configura la conexión con Google Sheets');
-                openSheetsConfig();
+                console.log('No hay URL configurada, guardando solo local');
                 return;
             }
 
-            const todaySales = sales.filter(s => isToday(s.timestamp));
-            if (todaySales.length === 0) {
-                alert('ℹ️ No hay ventas para guardar');
-                return;
-            }
-
-            const btn = document.getElementById('btnSyncSheets');
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = '⏳ Guardando...';
+            showSyncIndicator('syncing');
 
             try {
-                console.log('📤 Enviando', todaySales.length, 'ventas...');
-                
                 const response = await fetch(SHEETS_URL, {
                     method: 'POST',
                     redirect: 'follow',
@@ -700,45 +856,110 @@
                     },
                     body: JSON.stringify({
                         action: 'save_sales',
-                        sales: todaySales
+                        sales: [saleData]
                     })
                 });
-
-                console.log('📥 Respuesta:', response.status);
 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
                 }
 
-                const text = await response.text();
-                console.log('📄 Respuesta texto:', text);
-                
-                const result = JSON.parse(text);
-                console.log('✅ Resultado:', result);
+                const result = await response.json();
                 
                 if (result.status === 'success') {
-                    const totalIngresos = todaySales.reduce((sum, s) => sum + s.amount, 0);
-                    alert('✅ ¡DATOS GUARDADOS EXITOSAMENTE!\n\n' + 
-                          `📊 Registros guardados: ${result.data.ventas}\n` +
-                          `🎱 Sesiones de mesas: ${result.data.mesas}\n` +
-                          `🛒 Productos vendidos: ${result.data.productos}\n` +
-                          `💰 Total ingresos: $${totalIngresos.toLocaleString('es-CO')}\n\n` +
-                          `Ve a tu Google Sheet para ver toda la información organizada.`);
+                    showSyncIndicator('success');
+                    console.log('✅ Venta guardada automáticamente en Google Sheets');
                 } else {
                     throw new Error(result.message);
                 }
             } catch (error) {
-                console.error('❌ Error:', error);
-                alert('❌ ERROR AL GUARDAR\n\n' +
-                      'Error: ' + error.message + '\n\n' +
-                      'Posibles soluciones:\n' +
-                      '• Verifica que la URL sea correcta\n' +
-                      '• Crea una NUEVA implementación\n' +
-                      '• Revisa los permisos del script\n' +
-                      '• Mira la consola (F12) para más detalles');
+                console.error('❌ Error al auto-guardar:', error);
+                showNotification('⚠️ Error al guardar en Sheets. Datos guardados localmente.', 'warning');
+            }
+        }
+
+        // ========================================
+        // GOOGLE SHEETS CONFIGURATION
+        // ========================================
+
+        function openSheetsConfig() {
+            if (currentUser.role !== 'admin') {
+                alert('❌ Solo administradores pueden configurar Google Sheets');
+                return;
+            }
+
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = '🔗 Configurar Google Sheets';
+            body.innerHTML = `
+                <div class="alert alert-info" style="text-align: left;">
+                    <strong>📋 PASOS RÁPIDOS:</strong><br><br>
+                    1. Ve a tu Google Sheet<br>
+                    2. Extensiones → Apps Script<br>
+                    3. Implementar → Administrar implementaciones<br>
+                    4. Copia la URL que termina en /exec<br>
+                    5. Pégala abajo 👇
+                </div>
+
+                <div class="form-group">
+                    <label>URL del Apps Script (termina en /exec)</label>
+                    <input type="text" id="sheetsUrlInput" value="${SHEETS_URL}" 
+                           placeholder="https://script.google.com/macros/s/...../exec">
+                </div>
+
+                <button class="btn btn-success" id="btnSaveSheetsUrl">💾 Guardar y Probar</button>
+                <button class="btn btn-danger" id="btnCloseModal">Cancelar</button>
+            `;
+            modal.classList.add('active');
+
+            document.getElementById('btnSaveSheetsUrl').addEventListener('click', saveSheetsUrl);
+            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
+        }
+
+        async function saveSheetsUrl() {
+            const url = document.getElementById('sheetsUrlInput').value.trim();
+            
+            if (!url) {
+                alert('⚠️ Por favor ingresa la URL');
+                return;
+            }
+
+            if (!url.endsWith('/exec')) {
+                alert('⚠️ La URL debe terminar en /exec');
+                return;
+            }
+
+            SHEETS_URL = url;
+            saveConfig();
+            updateConnectionStatus();
+
+            const testBtn = document.getElementById('btnSaveSheetsUrl');
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ Probando...';
+
+            try {
+                const response = await fetch(SHEETS_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'test' })
+                });
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    alert('✅ ¡CONEXIÓN EXITOSA!\n\nYa puedes usar el sistema.');
+                    closeModal();
+                } else {
+                    throw new Error('No se pudo conectar');
+                }
+            } catch (error) {
+                alert('❌ ERROR DE CONEXIÓN\n\nVerifica la URL y los permisos.');
             } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
+                testBtn.disabled = false;
+                testBtn.textContent = '💾 Guardar y Probar';
             }
         }
 
@@ -757,8 +978,7 @@
                     elapsedTime: 0
                 });
             }
-            renderTables();
-            renderProductSelect();
+            saveTables();
         }
 
         function renderTables() {
@@ -771,7 +991,6 @@
                 </div>
             `).join('');
             
-            // Agregar event listeners a cada mesa
             document.querySelectorAll('.table-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const tableId = parseInt(this.getAttribute('data-table-id'));
@@ -817,10 +1036,10 @@
                 body.innerHTML = `
                     <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
                         <p><strong>⏱️ Tiempo:</strong> ${formatTime(elapsed)}</p>
-                        <p><strong>💵 Costo Mesa:</strong> $${tableCost.toLocaleString('es-CO')}</p>
-                        <p><strong>🛒 Productos:</strong> $${totalProducts.toLocaleString('es-CO')}</p>
+                        <p><strong>💵 Costo Mesa:</strong> ${tableCost.toLocaleString('es-CO')}</p>
+                        <p><strong>🛒 Productos:</strong> ${totalProducts.toLocaleString('es-CO')}</p>
                         <p style="font-size: 1.3em; color: #667eea; font-weight: bold; margin-top: 10px;">
-                            <strong>TOTAL:</strong> $${grandTotal.toLocaleString('es-CO')}
+                            <strong>TOTAL:</strong> ${grandTotal.toLocaleString('es-CO')}
                         </p>
                     </div>
 
@@ -894,7 +1113,6 @@
         }
 
         function attachCustomerListeners() {
-            // Remover clientes
             document.querySelectorAll('.btn-remove-customer').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const tableId = parseInt(this.getAttribute('data-table-id'));
@@ -903,7 +1121,6 @@
                 });
             });
 
-            // Agregar productos
             document.querySelectorAll('.btn-add-product').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const tableId = parseInt(this.getAttribute('data-table-id'));
@@ -912,7 +1129,6 @@
                 });
             });
 
-            // Remover productos
             document.querySelectorAll('.btn-remove-product').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const tableId = parseInt(this.getAttribute('data-table-id'));
@@ -937,6 +1153,7 @@
                 updateTableTime(tableId);
             }, 1000);
 
+            saveTables();
             closeModal();
             renderTables();
             setTimeout(() => openTableModal(tableId), 300);
@@ -983,6 +1200,7 @@
             const name = document.getElementById('customerNameInput').value.trim();
             const table = tables.find(t => t.id === tableId);
             table.customers.push({ name: name || '', products: [] });
+            saveTables();
             openTableModal(tableId);
             setTimeout(attachCustomerListeners, 100);
         }
@@ -991,6 +1209,7 @@
             if (!confirm('¿Eliminar este cliente y sus productos?')) return;
             const table = tables.find(t => t.id === tableId);
             table.customers.splice(customerIdx, 1);
+            saveTables();
             openTableModal(tableId);
             setTimeout(attachCustomerListeners, 100);
         }
@@ -1048,6 +1267,7 @@
                 total: parseInt(price) * quantity
             });
 
+            saveTables();
             openTableModal(tableId);
             setTimeout(attachCustomerListeners, 100);
         }
@@ -1055,6 +1275,7 @@
         function removeProduct(tableId, customerIdx, productIdx) {
             const table = tables.find(t => t.id === tableId);
             table.customers[customerIdx].products.splice(productIdx, 1);
+            saveTables();
             openTableModal(tableId);
             setTimeout(attachCustomerListeners, 100);
         }
@@ -1068,7 +1289,7 @@
             }
         }
 
-        function endTable(tableId) {
+        async function endTable(tableId) {
             const table = tables.find(t => t.id === tableId);
             const elapsed = getElapsedTime(table.startTime);
             const tableCost = calculateCost(elapsed);
@@ -1082,7 +1303,7 @@
 
             const grandTotal = tableCost + productsTotal;
 
-            sales.push({
+            const saleData = {
                 type: 'Mesa',
                 item: `Mesa ${tableId}`,
                 customers: table.customers.map((c, idx) => ({
@@ -1095,7 +1316,13 @@
                 productsTotal: productsTotal,
                 amount: grandTotal,
                 timestamp: new Date()
-            });
+            };
+
+            sales.push(saleData);
+            saveSalesData();
+
+            // AUTO-GUARDAR EN GOOGLE SHEETS
+            await autoSyncToSheets(saleData);
 
             clearInterval(activeIntervals[tableId]);
             delete activeIntervals[tableId];
@@ -1105,9 +1332,12 @@
             table.customers = [];
             table.elapsedTime = 0;
 
+            saveTables();
             closeModal();
             renderTables();
             renderSalesHistory();
+
+            showNotification(`✅ Mesa ${tableId} finalizada y guardada`, 'success');
         }
 
         // ========================================
@@ -1122,7 +1352,7 @@
                 ).join('');
         }
 
-        function addQuickSale() {
+        async function addQuickSale() {
             const select = document.getElementById('productSelect');
             const quantity = parseInt(document.getElementById('productQuantity').value);
             
@@ -1134,28 +1364,45 @@
             const [product, price] = select.value.split('|');
             const total = parseInt(price) * quantity;
 
-            sales.push({
+            const saleData = {
                 type: 'Venta',
                 item: `${product} x${quantity}`,
                 amount: total,
                 timestamp: new Date()
-            });
+            };
+
+            sales.push(saleData);
+            saveSalesData();
+
+            // AUTO-GUARDAR EN GOOGLE SHEETS
+            await autoSyncToSheets(saleData);
 
             select.value = '';
             document.getElementById('productQuantity').value = '1';
             renderSalesHistory();
             updateStats();
             
-            // Mensaje de confirmación
-            showNotification(`✓ ${product} agregado`);
+            showNotification(`✅ ${product} agregado y guardado`, 'success');
         }
 
-        function showNotification(message) {
+        function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
-            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #43e97b; color: white; padding: 15px 25px; border-radius: 8px; font-weight: bold; z-index: 10000; animation: slideIn 0.3s ease;';
+            notification.style.cssText = `
+                position: fixed; 
+                top: 20px; 
+                right: 20px; 
+                background: ${type === 'success' ? '#43e97b' : '#ffa726'}; 
+                color: white; 
+                padding: 15px 25px; 
+                border-radius: 8px; 
+                font-weight: bold; 
+                z-index: 10000; 
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            `;
             notification.textContent = message;
             document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 2000);
+            setTimeout(() => notification.remove(), 3000);
         }
 
         // ========================================
@@ -1163,6 +1410,8 @@
         // ========================================
 
         function renderSalesHistory() {
+            if (currentUser.role !== 'admin') return;
+
             const history = document.getElementById('salesHistory');
             const todaySales = sales.filter(s => isToday(s.timestamp));
             
@@ -1174,44 +1423,17 @@
             history.innerHTML = todaySales.slice().reverse().map(sale => {
                 if (sale.type === 'Mesa') {
                     return `
-                        <div class="history-item" style="flex-direction: column; align-items: flex-start;">
-                            <div style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <div>
-                                    <strong style="font-size: 1.1em;">${sale.item}</strong>
-                                    <br><small>${sale.timestamp.toLocaleTimeString('es-CO')} • Tiempo: ${sale.time}</small>
-                                </div>
+                        <div class="history-item">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong>${sale.item}</strong>
                                 <div class="history-amount">${sale.amount.toLocaleString('es-CO')}</div>
                             </div>
-                            
-                            ${sale.customers && sale.customers.length > 0 ? `
-                                <div style="width: 100%; background: #f8f9fa; padding: 10px; border-radius: 8px; margin-top: 5px;">
-                                    <strong style="font-size: 0.9em; color: #667eea;">Detalles:</strong>
-                                    ${sale.customers.map(customer => `
-                                        <div style="margin-top: 8px; padding: 8px; background: white; border-radius: 6px;">
-                                            <div style="font-weight: 600; color: #333;">👤 ${customer.name}</div>
-                                            ${customer.products.length > 0 ? `
-                                                <div style="margin-top: 5px; font-size: 0.85em;">
-                                                    ${customer.products.map(p => 
-                                                        `<div style="color: #666;">• ${p.name} x${p.quantity} - ${p.total.toLocaleString('es-CO')}</div>`
-                                                    ).join('')}
-                                                </div>
-                                                <div style="margin-top: 5px; font-weight: 600; color: #667eea;">
-                                                    Subtotal: ${customer.total.toLocaleString('es-CO')}
-                                                </div>
-                                            ` : '<div style="font-size: 0.85em; color: #999;">Sin productos</div>'}
-                                        </div>
-                                    `).join('')}
-                                    <div style="margin-top: 10px; padding-top: 8px; border-top: 2px solid #e0e0e0; font-size: 0.9em;">
-                                        <div>💵 Mesa: ${sale.tableCost.toLocaleString('es-CO')}</div>
-                                        <div>🛒 Productos: ${sale.productsTotal.toLocaleString('es-CO')}</div>
-                                    </div>
-                                </div>
-                            ` : ''}
+                            <small>${sale.timestamp.toLocaleTimeString('es-CO')} • ${sale.time}</small>
                         </div>
                     `;
                 } else {
                     return `
-                        <div class="history-item" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="history-item" style="display: flex; justify-content: space-between;">
                             <div>
                                 <strong>${sale.item}</strong>
                                 <br><small>${sale.timestamp.toLocaleTimeString('es-CO')}</small>
@@ -1224,15 +1446,26 @@
         }
 
         function clearHistory() {
-            if (confirm('¿Estás seguro de limpiar todo el historial de hoy?\n\n⚠️ Esta acción no se puede deshacer.')) {
+            if (currentUser.role !== 'admin') {
+                alert('❌ Solo administradores pueden limpiar el historial');
+                return;
+            }
+
+            if (confirm('¿Limpiar historial? Los datos en Google Sheets se mantendrán.')) {
                 sales = [];
+                saveSalesData();
                 renderSalesHistory();
                 updateStats();
-                alert('✓ Historial limpiado');
+                showNotification('✓ Historial limpiado', 'success');
             }
         }
 
         function exportReport() {
+            if (currentUser.role !== 'admin') {
+                alert('❌ Solo administradores pueden exportar reportes');
+                return;
+            }
+
             const todaySales = sales.filter(s => isToday(s.timestamp));
             
             if (todaySales.length === 0) {
@@ -1246,38 +1479,23 @@
             report += `${'='.repeat(60)}\n\n`;
             report += `Total de Ventas: ${todaySales.length}\n`;
             report += `Ingresos Totales: ${totalRevenue.toLocaleString('es-CO')}\n\n`;
-            report += `DETALLE DE VENTAS:\n`;
-            report += `${'-'.repeat(60)}\n`;
+            report += `DETALLE:\n${'-'.repeat(60)}\n`;
             
             todaySales.forEach((sale, idx) => {
                 report += `\n${idx + 1}. ${sale.item}\n`;
-                report += `   Tipo: ${sale.type}\n`;
-                if (sale.time) report += `   Tiempo: ${sale.time}\n`;
                 report += `   Monto: ${sale.amount.toLocaleString('es-CO')}\n`;
                 report += `   Hora: ${sale.timestamp.toLocaleTimeString('es-CO')}\n`;
-                
-                if (sale.customers && sale.customers.length > 0) {
-                    report += `   Clientes:\n`;
-                    sale.customers.forEach(customer => {
-                        report += `     - ${customer.name}: ${customer.total.toLocaleString('es-CO')}\n`;
-                        if (customer.products.length > 0) {
-                            customer.products.forEach(p => {
-                                report += `       • ${p.name} x${p.quantity}\n`;
-                            });
-                        }
-                    });
-                }
             });
 
             const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `reporte_billar_${new Date().toISOString().split('T')[0]}.txt`;
+            a.download = `reporte_${new Date().toISOString().split('T')[0]}.txt`;
             a.click();
             URL.revokeObjectURL(url);
             
-            showNotification('✓ Reporte exportado');
+            showNotification('✓ Reporte exportado', 'success');
         }
 
         // ========================================
@@ -1299,6 +1517,11 @@
         // ========================================
 
         function openSettingsModal() {
+            if (currentUser.role !== 'admin') {
+                alert('❌ Solo administradores');
+                return;
+            }
+
             const modal = document.getElementById('tableModal');
             const title = document.getElementById('modalTitle');
             const body = document.getElementById('modalBody');
@@ -1309,10 +1532,10 @@
                     <div id="productList"></div>
                 </div>
                 <div style="padding-top: 20px; border-top: 2px solid #f0f0f0;">
-                    <h3 style="margin-bottom: 15px;">➕ Agregar Nuevo Producto</h3>
+                    <h3 style="margin-bottom: 15px;">➕ Agregar Producto</h3>
                     <div class="form-group">
-                        <label>Nombre del Producto</label>
-                        <input type="text" id="newProductName" placeholder="Ej: Pizza, Hamburguesa">
+                        <label>Nombre</label>
+                        <input type="text" id="newProductName" placeholder="Ej: Pizza">
                     </div>
                     <div class="form-group">
                         <label>Precio ($)</label>
@@ -1333,7 +1556,7 @@
         function renderProductList() {
             const list = document.getElementById('productList');
             if (products.length === 0) {
-                list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay productos. Agrega el primero.</p>';
+                list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay productos</p>';
                 return;
             }
             
@@ -1343,11 +1566,10 @@
                         <strong>${p.name}</strong><br>
                         <span style="color: #667eea; font-weight: 600;">${p.price.toLocaleString('es-CO')}</span>
                     </div>
-                    <button class="btn btn-danger btn-delete-product" data-product-idx="${idx}" style="padding: 8px 15px; font-size: 0.9em;">Eliminar</button>
+                    <button class="btn btn-danger btn-delete-product" data-product-idx="${idx}" style="padding: 8px 15px;">Eliminar</button>
                 </div>
             `).join('');
             
-            // Agregar event listeners
             document.querySelectorAll('.btn-delete-product').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const idx = parseInt(this.getAttribute('data-product-idx'));
@@ -1361,7 +1583,7 @@
             const price = parseInt(document.getElementById('newProductPrice').value);
 
             if (!name || !price || price < 0) {
-                alert('Por favor ingresa un nombre y precio válidos');
+                alert('Ingresa nombre y precio válidos');
                 return;
             }
 
@@ -1372,7 +1594,7 @@
             document.getElementById('newProductName').value = '';
             document.getElementById('newProductPrice').value = '';
             
-            showNotification(`✓ ${name} agregado`);
+            showNotification(`✓ ${name} agregado`, 'success');
         }
 
         function deleteProduct(index) {
@@ -1382,7 +1604,7 @@
                 saveConfig();
                 renderProductList();
                 renderProductSelect();
-                showNotification(`✓ ${product.name} eliminado`);
+                showNotification(`✓ ${product.name} eliminado`, 'success');
             }
         }
 
@@ -1391,6 +1613,8 @@
         // ========================================
 
         function openTablesConfig() {
+            if (currentUser.role !== 'admin') return;
+
             const modal = document.getElementById('tableModal');
             const title = document.getElementById('modalTitle');
             const body = document.getElementById('modalBody');
@@ -1402,9 +1626,9 @@
                     <input type="number" id="numTablesInput" value="${NUM_TABLES}" min="1" max="20">
                 </div>
                 <p style="color: #999; font-size: 0.9em; margin-bottom: 20px;">
-                    ⚠️ Al cambiar el número de mesas, se reiniciará el sistema
+                    ⚠️ Reiniciará el sistema
                 </p>
-                <button class="btn btn-primary" id="btnUpdateTables">Guardar Cambios</button>
+                <button class="btn btn-primary" id="btnUpdateTables">Guardar</button>
                 <button class="btn btn-danger" id="btnCancelTables">Cancelar</button>
             `;
             modal.classList.add('active');
@@ -1416,20 +1640,19 @@
         function updateNumTables() {
             const newNum = parseInt(document.getElementById('numTablesInput').value);
             if (newNum < 1 || newNum > 20) {
-                alert('El número de mesas debe estar entre 1 y 20');
+                alert('Entre 1 y 20 mesas');
                 return;
             }
 
-            if (confirm('¿Estás seguro? Esto reiniciará todas las mesas activas.')) {
-                Object.keys(activeIntervals).forEach(key => {
-                    clearInterval(activeIntervals[key]);
-                });
+            if (confirm('¿Reiniciar mesas?')) {
+                Object.keys(activeIntervals).forEach(key => clearInterval(activeIntervals[key]));
                 activeIntervals = {};
                 NUM_TABLES = newNum;
                 saveConfig();
                 initTables();
+                renderTables();
                 closeModal();
-                showNotification(`✓ Ahora tienes ${newNum} mesas`);
+                showNotification(`✓ ${newNum} mesas configuradas`, 'success');
             }
         }
 
@@ -1438,6 +1661,8 @@
         // ========================================
 
         function openPriceConfig() {
+            if (currentUser.role !== 'admin') return;
+
             const modal = document.getElementById('tableModal');
             const title = document.getElementById('modalTitle');
             const body = document.getElementById('modalBody');
@@ -1445,13 +1670,13 @@
             title.textContent = 'Configurar Precios';
             body.innerHTML = `
                 <div class="form-group">
-                    <label>Precio por Hora de Mesa ($)</label>
+                    <label>Precio por Hora ($)</label>
                     <input type="number" id="hourlyRateInput" value="${HOURLY_RATE}" min="0" step="1000">
                 </div>
                 <p style="color: #999; font-size: 0.9em; margin-bottom: 20px;">
-                    💡 Precio actual: ${HOURLY_RATE.toLocaleString('es-CO')}/hora
+                    Actual: ${HOURLY_RATE.toLocaleString('es-CO')}/hora
                 </p>
-                <button class="btn btn-primary" id="btnUpdatePrice">Guardar Cambios</button>
+                <button class="btn btn-primary" id="btnUpdatePrice">Guardar</button>
                 <button class="btn btn-danger" id="btnCancelPrice">Cancelar</button>
             `;
             modal.classList.add('active');
@@ -1469,7 +1694,35 @@
             HOURLY_RATE = newRate;
             saveConfig();
             closeModal();
-            showNotification(`✓ Precio: ${HOURLY_RATE.toLocaleString('es-CO')}/hora`);
+            showNotification(`✓ Precio: ${HOURLY_RATE.toLocaleString('es-CO')}/h`, 'success');
+        }
+
+        // ========================================
+        // GESTIONAR USUARIOS
+        // ========================================
+
+        function openManageUsers() {
+            if (currentUser.role !== 'admin') return;
+
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = '👥 Gestionar Usuarios';
+            body.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Usuarios actuales:</strong><br>
+                    👑 Admin: <code>admin / admin123</code><br>
+                    👤 Empleado: <code>empleado / emp123</code>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <strong>⚠️ Nota:</strong> Para cambiar contraseñas, edita el código HTML en la sección USERS.
+                </div>
+
+                <button class="btn btn-danger" onclick="closeModal()">Cerrar</button>
+            `;
+            modal.classList.add('active');
         }
 
         // ========================================
@@ -1503,13 +1756,12 @@
                    date.getFullYear() === today.getFullYear();
         }
 
-        // Cerrar modal al hacer click fuera
         document.getElementById('tableModal').addEventListener('click', function(e) {
             if (e.target === this) closeModal();
         });
 
         // ========================================
-        // EVENT LISTENERS PRINCIPALES
+        // EVENT LISTENERS
         // ========================================
 
         document.getElementById('btnQuickSale').addEventListener('click', addQuickSale);
@@ -1517,7 +1769,7 @@
         document.getElementById('btnManageProducts').addEventListener('click', openSettingsModal);
         document.getElementById('btnConfigTables').addEventListener('click', openTablesConfig);
         document.getElementById('btnConfigPrices').addEventListener('click', openPriceConfig);
-        document.getElementById('btnSyncSheets').addEventListener('click', syncToSheets);
+        document.getElementById('btnManageUsers').addEventListener('click', openManageUsers);
         document.getElementById('btnClearHistory').addEventListener('click', clearHistory);
         document.getElementById('btnExportReport').addEventListener('click', exportReport);
 
@@ -1525,13 +1777,10 @@
         // INICIALIZACIÓN
         // ========================================
 
-        loadConfig();
-        initTables();
+        initAuth();
+        renderProductSelect();
         
-        console.log('🎱 Sistema de Billar cargado correctamente');
-        console.log('📊 Mesas:', NUM_TABLES);
-        console.log('💰 Precio/hora:', HOURLY_RATE);
-        console.log('🛒 Productos:', products.length);
+        console.log('🎱 Sistema de Billar Avanzado cargado');
     </script>
 </body>
 </html>
