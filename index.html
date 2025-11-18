@@ -18,6 +18,7 @@
             padding: 20px;
         }
 
+        /* LOGIN SCREEN */
         .login-screen {
             display: flex;
             align-items: center;
@@ -42,6 +43,7 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             max-width: 400px;
             width: 90%;
+            animation: slideIn 0.5s ease;
         }
 
         .login-header {
@@ -67,6 +69,25 @@
             margin: 0 auto 20px;
         }
 
+        .user-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .user-badge.admin {
+            background: #ffa726;
+            color: white;
+        }
+
+        .user-badge.employee {
+            background: #43e97b;
+            color: white;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -88,28 +109,14 @@
             align-items: center;
         }
 
-        .header h1 {
+        .header-left h1 {
             color: #667eea;
             font-size: 2em;
+            margin-bottom: 5px;
         }
 
-        .user-badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-
-        .user-badge.admin {
-            background: #ffa726;
-            color: white;
-        }
-
-        .user-badge.employee {
-            background: #43e97b;
-            color: white;
+        .header-right {
+            text-align: right;
         }
 
         .connection-status {
@@ -117,6 +124,7 @@
             padding: 8px 16px;
             border-radius: 20px;
             font-size: 0.9em;
+            margin-top: 10px;
             font-weight: 600;
         }
 
@@ -142,6 +150,11 @@
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
         }
 
         .card-header {
@@ -174,6 +187,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
+            margin-top: 20px;
         }
 
         .table-item {
@@ -188,6 +202,7 @@
 
         .table-item:hover {
             transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
 
         .table-item.occupied {
@@ -197,11 +212,12 @@
         .table-number {
             font-size: 2em;
             font-weight: bold;
+            margin-bottom: 5px;
         }
 
         .table-status {
             font-size: 0.9em;
-            margin-top: 5px;
+            opacity: 0.9;
         }
 
         .table-time {
@@ -230,6 +246,12 @@
             font-size: 1em;
         }
 
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
         .btn {
             padding: 12px 25px;
             border: none;
@@ -247,9 +269,19 @@
             color: white;
         }
 
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
         .btn-danger {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
         }
 
         .btn-success {
@@ -257,13 +289,21 @@
             color: white;
         }
 
-        .btn:hover {
+        .btn-success:hover {
             transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
         }
 
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-logout {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+            color: white;
+            padding: 10px 20px;
         }
 
         .modal {
@@ -291,6 +331,18 @@
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .modal-header {
@@ -305,6 +357,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             gap: 15px;
+            margin-top: 20px;
         }
 
         .stat-card {
@@ -318,11 +371,60 @@
         .stat-value {
             font-size: 2em;
             font-weight: bold;
+            margin-bottom: 5px;
         }
 
         .stat-label {
             font-size: 0.9em;
-            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        .history-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .history-amount {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .product-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
         }
 
         .admin-only {
@@ -331,17 +433,6 @@
 
         .admin-only.visible {
             display: block;
-        }
-
-        .alert {
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
         }
 
         .sync-indicator {
@@ -353,8 +444,10 @@
             padding: 12px 20px;
             border-radius: 25px;
             font-weight: bold;
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
             z-index: 999;
             display: none;
+            animation: pulse 2s infinite;
         }
 
         .sync-indicator.syncing {
@@ -365,9 +458,35 @@
         .sync-indicator.success {
             display: block;
         }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-right {
+                text-align: center;
+                margin-top: 15px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- LOGIN SCREEN -->
     <div class="login-screen" id="loginScreen">
         <div class="login-card">
             <div class="login-header">
@@ -391,39 +510,44 @@
             </button>
 
             <div class="alert alert-info" style="margin-top: 20px; font-size: 0.9em;">
-                <strong>Usuarios:</strong><br>
-                Admin: admin / admin123<br>
-                Empleado: empleado / emp123
+                <strong>Credenciales por defecto:</strong><br>
+                👤 Admin: <code>admin</code> / <code>admin123</code><br>
+                👤 Empleado: <code>empleado</code> / <code>emp123</code>
             </div>
         </div>
     </div>
 
+    <!-- MAIN APP -->
     <div class="container" id="mainApp">
         <div class="header">
-            <div>
-                <h1>🎱 Sistema de Billar</h1>
+            <div class="header-left">
+                <h1>🎱 Sistema de Gestión para Billar</h1>
                 <p>Usuario: <strong id="currentUser"></strong><span id="userBadge" class="user-badge"></span></p>
             </div>
-            <div style="text-align: right;">
-                <div id="connectionStatus" class="connection-status disconnected">No Configurado</div>
+            <div class="header-right">
+                <div id="connectionStatus" class="connection-status disconnected">
+                    ⚠️ No Configurado
+                </div>
                 <br>
-                <button class="btn btn-danger" id="btnLogout">Cerrar Sesión</button>
+                <button class="btn btn-logout" id="btnLogout">🚪 Cerrar Sesión</button>
             </div>
         </div>
 
         <div class="main-grid">
+            <!-- Mesas de Billar -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">🎱</div>
-                    <div class="card-title">Mesas</div>
+                    <div class="card-title">Mesas de Billar</div>
                 </div>
                 <div class="table-grid" id="tablesGrid"></div>
             </div>
 
+            <!-- Estadísticas -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">📊</div>
-                    <div class="card-title">Estadísticas</div>
+                    <div class="card-title">Estadísticas del Día</div>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -441,6 +565,7 @@
                 </div>
             </div>
 
+            <!-- Ventas Rápidas -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-icon">🛒</div>
@@ -449,7 +574,7 @@
                 <div class="form-group">
                     <label>Producto</label>
                     <select id="productSelect">
-                        <option value="">Seleccionar</option>
+                        <option value="">Seleccionar producto</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -459,48 +584,70 @@
                 <button class="btn btn-success" id="btnQuickSale">Agregar Venta</button>
             </div>
 
+            <!-- Configuración (Solo Admin) -->
             <div class="card admin-only" id="configCard">
                 <div class="card-header">
                     <div class="card-icon">⚙️</div>
                     <div class="card-title">Configuración</div>
                 </div>
-                <button class="btn btn-primary" id="btnConfigSheets" style="width: 100%;">Configurar Google Sheets</button>
-                <button class="btn btn-primary" id="btnManageProducts" style="width: 100%;">Gestionar Productos</button>
-                <button class="btn btn-primary" id="btnConfigTables" style="width: 100%;">Configurar Mesas</button>
-                <button class="btn btn-primary" id="btnConfigPrices" style="width: 100%;">Configurar Precios</button>
+                <button class="btn btn-primary" id="btnConfigSheets" style="width: 100%;">
+                    🔗 Configurar Google Sheets
+                </button>
+                <button class="btn btn-primary" id="btnManageProducts" style="width: 100%;">
+                    Gestionar Productos
+                </button>
+                <button class="btn btn-primary" id="btnConfigTables" style="width: 100%;">
+                    Configurar Mesas
+                </button>
+                <button class="btn btn-primary" id="btnConfigPrices" style="width: 100%;">
+                    Configurar Precios
+                </button>
+                <button class="btn btn-primary" id="btnManageUsers" style="width: 100%;">
+                    Gestionar Usuarios
+                </button>
             </div>
+        </div>
+
+        <!-- Historial de Ventas (Solo Admin) -->
+        <div class="card admin-only">
+            <div class="card-header">
+                <div class="card-icon">📝</div>
+                <div class="card-title">Historial de Hoy</div>
+            </div>
+            <button class="btn btn-danger" id="btnClearHistory">
+                Limpiar Historial
+            </button>
+            <button class="btn btn-primary" id="btnExportReport">
+                📄 Exportar Reporte
+            </button>
+            <div id="salesHistory"></div>
         </div>
     </div>
 
+    <!-- Modal -->
     <div id="tableModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header" id="modalTitle">Mesa</div>
+            <div class="modal-header" id="modalTitle">Mesa #1</div>
             <div id="modalBody"></div>
         </div>
     </div>
 
-    <div class="sync-indicator" id="syncIndicator">Guardando...</div>
+    <!-- Sync Indicator -->
+    <div class="sync-indicator" id="syncIndicator">
+        ☁️ Guardando...
+    </div>
 
     <script>
+        // ========================================
+        // SISTEMA DE AUTENTICACIÓN
+        // ========================================
+
         const USERS = {
             admin: { password: 'admin123', role: 'admin', name: 'Administrador' },
             empleado: { password: 'emp123', role: 'employee', name: 'Empleado' }
         };
 
         let currentUser = null;
-        let tables = [];
-        let sales = [];
-        let activeIntervals = {};
-        let HOURLY_RATE = 15000;
-        let NUM_TABLES = 8;
-        let SHEETS_URL = '';
-        
-        let products = [
-            { name: 'Cerveza', price: 5000 },
-            { name: 'Gaseosa', price: 3000 },
-            { name: 'Agua', price: 2000 },
-            { name: 'Snack', price: 4000 }
-        ];
 
         function initAuth() {
             const savedUser = localStorage.getItem('currentUser');
@@ -523,19 +670,20 @@
             document.getElementById('currentUser').textContent = currentUser.name;
             
             const badge = document.getElementById('userBadge');
-            badge.textContent = currentUser.role === 'admin' ? 'Admin' : 'Empleado';
+            badge.textContent = currentUser.role === 'admin' ? '👑 Admin' : '👤 Empleado';
             badge.className = 'user-badge ' + currentUser.role;
 
+            // Mostrar/ocultar elementos según rol
             if (currentUser.role === 'admin') {
                 document.querySelectorAll('.admin-only').forEach(el => {
                     el.classList.add('visible');
                 });
             }
 
-            loadConfig();
             loadTables();
+            loadConfig();
             renderTables();
-            renderProductSelect();
+            renderSalesHistory();
         }
 
         document.getElementById('btnLogin').addEventListener('click', function() {
@@ -551,7 +699,7 @@
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 showMainApp();
             } else {
-                alert('Usuario o contraseña incorrectos');
+                alert('❌ Usuario o contraseña incorrectos');
             }
         });
 
@@ -566,9 +714,76 @@
                 localStorage.removeItem('currentUser');
                 currentUser = null;
                 showLoginScreen();
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
             }
         });
 
+        // ========================================
+        // VARIABLES GLOBALES
+        // ========================================
+
+        let tables = [];
+        let sales = [];
+        let activeIntervals = {};
+        let HOURLY_RATE = 15000;
+        let NUM_TABLES = 8;
+        let SHEETS_URL = '';
+        
+        let products = [
+            { name: 'Cerveza', price: 5000 },
+            { name: 'Gaseosa', price: 3000 },
+            { name: 'Agua', price: 2000 },
+            { name: 'Snack', price: 4000 },
+            { name: 'Michelada', price: 7000 },
+            { name: 'Café', price: 2500 },
+            { name: 'Sandwich', price: 8000 }
+        ];
+
+        // ========================================
+        // PERSISTENCIA DE DATOS
+        // ========================================
+
+        function saveTables() {
+            localStorage.setItem('tables', JSON.stringify(tables));
+        }
+
+        function loadTables() {
+            const saved = localStorage.getItem('tables');
+            if (saved) {
+                tables = JSON.parse(saved);
+                // Reiniciar intervalos para mesas ocupadas
+                tables.forEach(table => {
+                    if (table.occupied && table.startTime) {
+                        activeIntervals[table.id] = setInterval(() => {
+                            updateTableTime(table.id);
+                        }, 1000);
+                    }
+                });
+            } else {
+                initTables();
+            }
+        }
+
+        function saveSalesData() {
+            localStorage.setItem('sales', JSON.stringify(sales));
+        }
+
+        function loadSalesData() {
+            const saved = localStorage.getItem('sales');
+            if (saved) {
+                sales = JSON.parse(saved);
+                // Convertir strings de fecha a objetos Date
+                sales.forEach(sale => {
+                    sale.timestamp = new Date(sale.timestamp);
+                });
+            }
+        }
+
+        // ========================================
+        // CONFIGURACIÓN
+        // ========================================
+        
         function loadConfig() {
             const savedRate = localStorage.getItem('hourlyRate');
             const savedTables = localStorage.getItem('numTables');
@@ -597,46 +812,160 @@
             const statusEl = document.getElementById('connectionStatus');
             if (SHEETS_URL) {
                 statusEl.className = 'connection-status connected';
-                statusEl.textContent = 'Conectado';
+                statusEl.textContent = '✓ Conectado a Google Sheets';
             } else {
                 statusEl.className = 'connection-status disconnected';
-                statusEl.textContent = 'No Configurado';
+                statusEl.textContent = '⚠️ No Configurado';
             }
         }
 
-        function saveTables() {
-            localStorage.setItem('tables', JSON.stringify(tables));
+        // ========================================
+        // AUTO-GUARDADO EN GOOGLE SHEETS
+        // ========================================
+
+        function showSyncIndicator(status) {
+            const indicator = document.getElementById('syncIndicator');
+            indicator.classList.remove('syncing', 'success');
+            
+            if (status === 'syncing') {
+                indicator.textContent = '☁️ Guardando...';
+                indicator.classList.add('syncing');
+            } else if (status === 'success') {
+                indicator.textContent = '✅ Guardado';
+                indicator.classList.add('success');
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                }, 3000);
+            }
         }
 
-        function loadTables() {
-            const saved = localStorage.getItem('tables');
-            if (saved) {
-                tables = JSON.parse(saved);
-                tables.forEach(table => {
-                    if (table.occupied && table.startTime) {
-                        activeIntervals[table.id] = setInterval(() => {
-                            updateTableTime(table.id);
-                        }, 1000);
-                    }
+        async function autoSyncToSheets(saleData) {
+            if (!SHEETS_URL) {
+                console.log('No hay URL configurada, guardando solo local');
+                return;
+            }
+
+            showSyncIndicator('syncing');
+
+            try {
+                const response = await fetch(SHEETS_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify({
+                        action: 'save_sales',
+                        sales: [saleData]
+                    })
                 });
-            } else {
-                initTables();
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showSyncIndicator('success');
+                    console.log('✅ Venta guardada automáticamente en Google Sheets');
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error('❌ Error al auto-guardar:', error);
+                showNotification('⚠️ Error al guardar en Sheets. Datos guardados localmente.', 'warning');
             }
         }
 
-        function saveSalesData() {
-            localStorage.setItem('sales', JSON.stringify(sales));
+        // ========================================
+        // GOOGLE SHEETS CONFIGURATION
+        // ========================================
+
+        function openSheetsConfig() {
+            if (currentUser.role !== 'admin') {
+                alert('❌ Solo administradores pueden configurar Google Sheets');
+                return;
+            }
+
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = '🔗 Configurar Google Sheets';
+            body.innerHTML = `
+                <div class="alert alert-info" style="text-align: left;">
+                    <strong>📋 PASOS RÁPIDOS:</strong><br><br>
+                    1. Ve a tu Google Sheet<br>
+                    2. Extensiones → Apps Script<br>
+                    3. Implementar → Administrar implementaciones<br>
+                    4. Copia la URL que termina en /exec<br>
+                    5. Pégala abajo 👇
+                </div>
+
+                <div class="form-group">
+                    <label>URL del Apps Script (termina en /exec)</label>
+                    <input type="text" id="sheetsUrlInput" value="${SHEETS_URL}" 
+                           placeholder="https://script.google.com/macros/s/...../exec">
+                </div>
+
+                <button class="btn btn-success" id="btnSaveSheetsUrl">💾 Guardar y Probar</button>
+                <button class="btn btn-danger" id="btnCloseModal">Cancelar</button>
+            `;
+            modal.classList.add('active');
+
+            document.getElementById('btnSaveSheetsUrl').addEventListener('click', saveSheetsUrl);
+            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
         }
 
-        function loadSalesData() {
-            const saved = localStorage.getItem('sales');
-            if (saved) {
-                sales = JSON.parse(saved);
-                sales.forEach(sale => {
-                    sale.timestamp = new Date(sale.timestamp);
+        async function saveSheetsUrl() {
+            const url = document.getElementById('sheetsUrlInput').value.trim();
+            
+            if (!url) {
+                alert('⚠️ Por favor ingresa la URL');
+                return;
+            }
+
+            if (!url.endsWith('/exec')) {
+                alert('⚠️ La URL debe terminar en /exec');
+                return;
+            }
+
+            SHEETS_URL = url;
+            saveConfig();
+            updateConnectionStatus();
+
+            const testBtn = document.getElementById('btnSaveSheetsUrl');
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ Probando...';
+
+            try {
+                const response = await fetch(SHEETS_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'test' })
                 });
+
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    alert('✅ ¡CONEXIÓN EXITOSA!\n\nYa puedes usar el sistema.');
+                    closeModal();
+                } else {
+                    throw new Error('No se pudo conectar');
+                }
+            } catch (error) {
+                alert('❌ ERROR DE CONEXIÓN\n\nVerifica la URL y los permisos.');
+            } finally {
+                testBtn.disabled = false;
+                testBtn.textContent = '💾 Guardar y Probar';
             }
         }
+
+        // ========================================
+        // MESAS
+        // ========================================
 
         function initTables() {
             tables = [];
@@ -645,7 +974,8 @@
                     id: i,
                     occupied: false,
                     startTime: null,
-                    customers: []
+                    customers: [],
+                    elapsedTime: 0
                 });
             }
             saveTables();
@@ -681,7 +1011,9 @@
 
             if (!table.occupied) {
                 body.innerHTML = `
-                    <p style="margin-bottom: 20px;">Mesa disponible</p>
+                    <p style="margin-bottom: 20px; color: #666;">
+                        Mesa disponible. ¿Iniciar sesión?
+                    </p>
                     <button class="btn btn-primary" id="btnStartTable">Iniciar Mesa</button>
                     <button class="btn btn-danger" id="btnCancelTable">Cancelar</button>
                 `;
@@ -702,28 +1034,29 @@
                 const grandTotal = tableCost + totalProducts;
                 
                 body.innerHTML = `
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                        <h3 style="text-align: center; margin-bottom: 15px;">RESUMEN GENERAL</h3>
-                        <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px;">
-                            <p><strong>Tiempo:</strong> ${formatTime(elapsed)}</p>
-                            <p><strong>Costo Mesa:</strong> $${tableCost.toLocaleString('es-CO')}</p>
-                            <p><strong>Productos:</strong> $${totalProducts.toLocaleString('es-CO')}</p>
-                            <p style="font-size: 1.3em; margin-top: 10px;"><strong>TOTAL:</strong> $${grandTotal.toLocaleString('es-CO')}</p>
-                        </div>
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                        <p><strong>⏱️ Tiempo:</strong> ${formatTime(elapsed)}</p>
+                        <p><strong>💵 Costo Mesa:</strong> ${tableCost.toLocaleString('es-CO')}</p>
+                        <p><strong>🛒 Productos:</strong> ${totalProducts.toLocaleString('es-CO')}</p>
+                        <p style="font-size: 1.3em; color: #667eea; font-weight: bold; margin-top: 10px;">
+                            <strong>TOTAL:</strong> ${grandTotal.toLocaleString('es-CO')}
+                        </p>
                     </div>
 
-                    <div id="customersList"></div>
+                    <div id="customersList">${renderCustomersList(table)}</div>
 
                     ${table.customers.length < 4 ? `
-                        <button class="btn btn-primary" id="btnAddCustomer" style="width: 100%; margin: 15px 0;">
-                            Agregar Cliente
+                        <button class="btn btn-primary" id="btnAddCustomer" style="width: 100%; margin-top: 15px;">
+                            ➕ Agregar Cliente (${table.customers.length}/4)
                         </button>
                     ` : ''}
 
-                    <button class="btn btn-success" id="btnEndTable" style="width: 100%; margin-bottom: 10px;">
-                        Finalizar y Cobrar - $${grandTotal.toLocaleString('es-CO')}
-                    </button>
-                    <button class="btn btn-danger" id="btnCloseTableModal">Cerrar</button>
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                        <button class="btn btn-success" id="btnEndTable" style="width: 100%; margin-bottom: 10px;">
+                            ✓ Finalizar y Cobrar
+                        </button>
+                        <button class="btn btn-danger" id="btnCloseTableModal">Cerrar</button>
+                    </div>
                 `;
                 
                 if (table.customers.length < 4) {
@@ -734,6 +1067,76 @@
             }
 
             modal.classList.add('active');
+        }
+
+        function renderCustomersList(table) {
+            if (table.customers.length === 0) {
+                return '<p style="text-align: center; color: #999; padding: 20px;">No hay clientes. Agrega el primero.</p>';
+            }
+
+            return table.customers.map((customer, idx) => {
+                const customerTotal = customer.products.reduce((sum, p) => sum + p.total, 0);
+                return `
+                    <div style="background: white; border: 2px solid #e0e0e0; border-radius: 12px; padding: 15px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h3 style="color: #667eea; margin: 0;">
+                                👤 ${customer.name || `Cliente ${idx + 1}`}
+                            </h3>
+                            <button class="btn btn-danger btn-remove-customer" data-table-id="${table.id}" data-customer-idx="${idx}" style="padding: 5px 10px; font-size: 0.85em;">✕</button>
+                        </div>
+                        
+                        ${customer.products.length > 0 ? `
+                            <div style="margin-bottom: 10px;">
+                                ${customer.products.map((product, pIdx) => `
+                                    <div style="display: flex; justify-content: space-between; padding: 8px; background: #f8f9fa; border-radius: 6px; margin-bottom: 5px;">
+                                        <span>${product.name} x${product.quantity}</span>
+                                        <div>
+                                            <strong style="color: #667eea;">${product.total.toLocaleString('es-CO')}</strong>
+                                            <button class="btn-remove-product" data-table-id="${table.id}" data-customer-idx="${idx}" data-product-idx="${pIdx}" style="background: none; border: none; color: #f5576c; cursor: pointer; margin-left: 10px; font-weight: bold;">✕</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : '<p style="color: #999; font-size: 0.9em;">Sin productos</p>'}
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e0e0e0;">
+                            <strong>Subtotal:</strong>
+                            <strong style="color: #667eea; font-size: 1.2em;">${customerTotal.toLocaleString('es-CO')}</strong>
+                        </div>
+                        
+                        <button class="btn btn-primary btn-add-product" data-table-id="${table.id}" data-customer-idx="${idx}" style="width: 100%; margin-top: 10px; padding: 8px;">
+                            🛒 Agregar Producto
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function attachCustomerListeners() {
+            document.querySelectorAll('.btn-remove-customer').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tableId = parseInt(this.getAttribute('data-table-id'));
+                    const customerIdx = parseInt(this.getAttribute('data-customer-idx'));
+                    removeCustomer(tableId, customerIdx);
+                });
+            });
+
+            document.querySelectorAll('.btn-add-product').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tableId = parseInt(this.getAttribute('data-table-id'));
+                    const customerIdx = parseInt(this.getAttribute('data-customer-idx'));
+                    addProductToCustomer(tableId, customerIdx);
+                });
+            });
+
+            document.querySelectorAll('.btn-remove-product').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tableId = parseInt(this.getAttribute('data-table-id'));
+                    const customerIdx = parseInt(this.getAttribute('data-customer-idx'));
+                    const productIdx = parseInt(this.getAttribute('data-product-idx'));
+                    removeProduct(tableId, customerIdx, productIdx);
+                });
+            });
         }
 
         function closeModal() {
@@ -753,13 +1156,137 @@
             saveTables();
             closeModal();
             renderTables();
+            setTimeout(() => openTableModal(tableId), 300);
         }
 
         function addCustomerToTable(tableId) {
             const table = tables.find(t => t.id === tableId);
-            table.customers.push({ name: '', products: [] });
+            
+            if (table.customers.length >= 4) {
+                alert('No puedes agregar más de 4 clientes por mesa');
+                return;
+            }
+
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = '➕ Agregar Cliente';
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Nombre del Cliente (opcional)</label>
+                    <input type="text" id="customerNameInput" placeholder="Ej: Pedro, María, Juan..." autofocus>
+                </div>
+                <p style="color: #999; font-size: 0.9em; margin-bottom: 20px;">
+                    💡 Puedes dejar el nombre vacío
+                </p>
+                <button class="btn btn-primary" id="btnConfirmAddCustomer">Agregar Cliente</button>
+                <button class="btn btn-danger" id="btnCancelAddCustomer">Cancelar</button>
+            `;
+
+            document.getElementById('btnConfirmAddCustomer').addEventListener('click', () => confirmAddCustomer(tableId));
+            document.getElementById('btnCancelAddCustomer').addEventListener('click', () => openTableModal(tableId));
+
+            setTimeout(() => {
+                const input = document.getElementById('customerNameInput');
+                input.focus();
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') confirmAddCustomer(tableId);
+                });
+            }, 100);
+        }
+
+        function confirmAddCustomer(tableId) {
+            const name = document.getElementById('customerNameInput').value.trim();
+            const table = tables.find(t => t.id === tableId);
+            table.customers.push({ name: name || '', products: [] });
             saveTables();
             openTableModal(tableId);
+            setTimeout(attachCustomerListeners, 100);
+        }
+
+        function removeCustomer(tableId, customerIdx) {
+            if (!confirm('¿Eliminar este cliente y sus productos?')) return;
+            const table = tables.find(t => t.id === tableId);
+            table.customers.splice(customerIdx, 1);
+            saveTables();
+            openTableModal(tableId);
+            setTimeout(attachCustomerListeners, 100);
+        }
+
+        function addProductToCustomer(tableId, customerIdx) {
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            const table = tables.find(t => t.id === tableId);
+            const customer = table.customers[customerIdx];
+
+            title.textContent = `Agregar Producto - ${customer.name || `Cliente ${customerIdx + 1}`}`;
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Producto</label>
+                    <select id="productSelectModal">
+                        <option value="">Seleccionar producto</option>
+                        ${products.map(p => 
+                            `<option value="${p.name}|${p.price}">${p.name} - ${p.price.toLocaleString('es-CO')}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Cantidad</label>
+                    <input type="number" id="productQuantityModal" value="1" min="1">
+                </div>
+                <button class="btn btn-primary" id="btnConfirmAddProduct">Agregar</button>
+                <button class="btn btn-danger" id="btnCancelAddProduct">Volver</button>
+            `;
+
+            document.getElementById('btnConfirmAddProduct').addEventListener('click', () => confirmAddProduct(tableId, customerIdx));
+            document.getElementById('btnCancelAddProduct').addEventListener('click', () => {
+                openTableModal(tableId);
+                setTimeout(attachCustomerListeners, 100);
+            });
+        }
+
+        function confirmAddProduct(tableId, customerIdx) {
+            const select = document.getElementById('productSelectModal');
+            const quantity = parseInt(document.getElementById('productQuantityModal').value);
+            
+            if (!select.value || quantity < 1) {
+                alert('Selecciona un producto y cantidad válida');
+                return;
+            }
+
+            const [productName, price] = select.value.split('|');
+            const table = tables.find(t => t.id === tableId);
+            const customer = table.customers[customerIdx];
+
+            customer.products.push({
+                name: productName,
+                price: parseInt(price),
+                quantity: quantity,
+                total: parseInt(price) * quantity
+            });
+
+            saveTables();
+            openTableModal(tableId);
+            setTimeout(attachCustomerListeners, 100);
+        }
+
+        function removeProduct(tableId, customerIdx, productIdx) {
+            const table = tables.find(t => t.id === tableId);
+            table.customers[customerIdx].products.splice(productIdx, 1);
+            saveTables();
+            openTableModal(tableId);
+            setTimeout(attachCustomerListeners, 100);
+        }
+
+        function updateTableTime(tableId) {
+            const table = tables.find(t => t.id === tableId);
+            if (table && table.occupied) {
+                const elapsed = getElapsedTime(table.startTime);
+                const element = document.getElementById(`time-${tableId}`);
+                if (element) element.textContent = formatTime(elapsed);
+            }
         }
 
         async function endTable(tableId) {
@@ -779,7 +1306,11 @@
             const saleData = {
                 type: 'Mesa',
                 item: `Mesa ${tableId}`,
-                customers: table.customers,
+                customers: table.customers.map((c, idx) => ({
+                    name: c.name || `Cliente ${idx + 1}`,
+                    products: c.products,
+                    total: c.products.reduce((sum, p) => sum + p.total, 0)
+                })),
                 time: formatTime(elapsed),
                 tableCost: tableCost,
                 productsTotal: productsTotal,
@@ -790,6 +1321,7 @@
             sales.push(saleData);
             saveSalesData();
 
+            // AUTO-GUARDAR EN GOOGLE SHEETS
             await autoSyncToSheets(saleData);
 
             clearInterval(activeIntervals[tableId]);
@@ -798,28 +1330,25 @@
             table.occupied = false;
             table.startTime = null;
             table.customers = [];
+            table.elapsedTime = 0;
 
             saveTables();
             closeModal();
             renderTables();
+            renderSalesHistory();
 
-            alert('Mesa finalizada y guardada');
+            showNotification(`✅ Mesa ${tableId} finalizada y guardada`, 'success');
         }
 
-        function updateTableTime(tableId) {
-            const table = tables.find(t => t.id === tableId);
-            if (table && table.occupied) {
-                const elapsed = getElapsedTime(table.startTime);
-                const element = document.getElementById(`time-${tableId}`);
-                if (element) element.textContent = formatTime(elapsed);
-            }
-        }
+        // ========================================
+        // VENTAS RÁPIDAS
+        // ========================================
 
         function renderProductSelect() {
             const select = document.getElementById('productSelect');
-            select.innerHTML = '<option value="">Seleccionar</option>' +
+            select.innerHTML = '<option value="">Seleccionar producto</option>' +
                 products.map(p => 
-                    `<option value="${p.name}|${p.price}">${p.name} - $${p.price.toLocaleString('es-CO')}</option>`
+                    `<option value="${p.name}|${p.price}">${p.name} - ${p.price.toLocaleString('es-CO')}</option>`
                 ).join('');
         }
 
@@ -828,7 +1357,7 @@
             const quantity = parseInt(document.getElementById('productQuantity').value);
             
             if (!select.value || quantity < 1) {
-                alert('Selecciona un producto válido');
+                alert('Por favor selecciona un producto y cantidad válida');
                 return;
             }
 
@@ -845,47 +1374,133 @@
             sales.push(saleData);
             saveSalesData();
 
+            // AUTO-GUARDAR EN GOOGLE SHEETS
             await autoSyncToSheets(saleData);
 
             select.value = '';
             document.getElementById('productQuantity').value = '1';
+            renderSalesHistory();
             updateStats();
             
-            alert('Venta registrada y guardada');
+            showNotification(`✅ ${product} agregado y guardado`, 'success');
         }
 
-        document.getElementById('btnQuickSale').addEventListener('click', addQuickSale);
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed; 
+                top: 20px; 
+                right: 20px; 
+                background: ${type === 'success' ? '#43e97b' : '#ffa726'}; 
+                color: white; 
+                padding: 15px 25px; 
+                border-radius: 8px; 
+                font-weight: bold; 
+                z-index: 10000; 
+                animation: slideIn 0.3s ease;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
 
-        async function autoSyncToSheets(saleData) {
-            if (!SHEETS_URL) return;
+        // ========================================
+        // HISTORIAL
+        // ========================================
 
-            const indicator = document.getElementById('syncIndicator');
-            indicator.classList.add('syncing');
-            indicator.textContent = 'Guardando...';
+        function renderSalesHistory() {
+            if (currentUser.role !== 'admin') return;
 
-            try {
-                const response = await fetch(SHEETS_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'save_sales',
-                        sales: [saleData]
-                    })
-                });
+            const history = document.getElementById('salesHistory');
+            const todaySales = sales.filter(s => isToday(s.timestamp));
+            
+            if (todaySales.length === 0) {
+                history.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay ventas registradas hoy</p>';
+                return;
+            }
 
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    indicator.classList.remove('syncing');
-                    indicator.classList.add('success');
-                    indicator.textContent = 'Guardado';
-                    setTimeout(() => {
-                        indicator.classList.remove('success');
-                    }, 3000);
+            history.innerHTML = todaySales.slice().reverse().map(sale => {
+                if (sale.type === 'Mesa') {
+                    return `
+                        <div class="history-item">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong>${sale.item}</strong>
+                                <div class="history-amount">${sale.amount.toLocaleString('es-CO')}</div>
+                            </div>
+                            <small>${sale.timestamp.toLocaleTimeString('es-CO')} • ${sale.time}</small>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="history-item" style="display: flex; justify-content: space-between;">
+                            <div>
+                                <strong>${sale.item}</strong>
+                                <br><small>${sale.timestamp.toLocaleTimeString('es-CO')}</small>
+                            </div>
+                            <div class="history-amount">${sale.amount.toLocaleString('es-CO')}</div>
+                        </div>
+                    `;
                 }
-            } catch (error) {
-                console.error('Error:', error);
+            }).join('');
+        }
+
+        function clearHistory() {
+            if (currentUser.role !== 'admin') {
+                alert('❌ Solo administradores pueden limpiar el historial');
+                return;
+            }
+
+            if (confirm('¿Limpiar historial? Los datos en Google Sheets se mantendrán.')) {
+                sales = [];
+                saveSalesData();
+                renderSalesHistory();
+                updateStats();
+                showNotification('✓ Historial limpiado', 'success');
             }
         }
+
+        function exportReport() {
+            if (currentUser.role !== 'admin') {
+                alert('❌ Solo administradores pueden exportar reportes');
+                return;
+            }
+
+            const todaySales = sales.filter(s => isToday(s.timestamp));
+            
+            if (todaySales.length === 0) {
+                alert('ℹ️ No hay ventas para exportar');
+                return;
+            }
+            
+            const totalRevenue = todaySales.reduce((sum, s) => sum + s.amount, 0);
+            
+            let report = `REPORTE DE VENTAS - ${new Date().toLocaleDateString('es-CO')}\n`;
+            report += `${'='.repeat(60)}\n\n`;
+            report += `Total de Ventas: ${todaySales.length}\n`;
+            report += `Ingresos Totales: ${totalRevenue.toLocaleString('es-CO')}\n\n`;
+            report += `DETALLE:\n${'-'.repeat(60)}\n`;
+            
+            todaySales.forEach((sale, idx) => {
+                report += `\n${idx + 1}. ${sale.item}\n`;
+                report += `   Monto: ${sale.amount.toLocaleString('es-CO')}\n`;
+                report += `   Hora: ${sale.timestamp.toLocaleTimeString('es-CO')}\n`;
+            });
+
+            const blob = new Blob([report], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reporte_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('✓ Reporte exportado', 'success');
+        }
+
+        // ========================================
+        // ESTADÍSTICAS
+        // ========================================
 
         function updateStats() {
             const activeTables = tables.filter(t => t.occupied).length;
@@ -893,9 +1508,226 @@
             const totalRevenue = todaySales.reduce((sum, s) => sum + s.amount, 0);
 
             document.getElementById('activeTables').textContent = activeTables;
-            document.getElementById('totalRevenue').textContent = `$${totalRevenue.toLocaleString('es-CO')}`;
+            document.getElementById('totalRevenue').textContent = `${totalRevenue.toLocaleString('es-CO')}`;
             document.getElementById('totalSessions').textContent = todaySales.length;
         }
+
+        // ========================================
+        // CONFIGURACIÓN - PRODUCTOS
+        // ========================================
+
+        function openSettingsModal() {
+            if (currentUser.role !== 'admin') {
+                alert('❌ Solo administradores');
+                return;
+            }
+
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = 'Gestionar Productos';
+            body.innerHTML = `
+                <div style="max-height: 400px; overflow-y: auto; margin-bottom: 20px;">
+                    <div id="productList"></div>
+                </div>
+                <div style="padding-top: 20px; border-top: 2px solid #f0f0f0;">
+                    <h3 style="margin-bottom: 15px;">➕ Agregar Producto</h3>
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="newProductName" placeholder="Ej: Pizza">
+                    </div>
+                    <div class="form-group">
+                        <label>Precio ($)</label>
+                        <input type="number" id="newProductPrice" placeholder="0" min="0" step="500">
+                    </div>
+                    <button class="btn btn-primary" id="btnAddNewProduct">Agregar</button>
+                    <button class="btn btn-danger" id="btnCloseProductsModal">Cerrar</button>
+                </div>
+            `;
+            
+            renderProductList();
+            modal.classList.add('active');
+            
+            document.getElementById('btnAddNewProduct').addEventListener('click', addProduct);
+            document.getElementById('btnCloseProductsModal').addEventListener('click', closeModal);
+        }
+
+        function renderProductList() {
+            const list = document.getElementById('productList');
+            if (products.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No hay productos</p>';
+                return;
+            }
+            
+            list.innerHTML = products.map((p, idx) => `
+                <div class="product-item">
+                    <div>
+                        <strong>${p.name}</strong><br>
+                        <span style="color: #667eea; font-weight: 600;">${p.price.toLocaleString('es-CO')}</span>
+                    </div>
+                    <button class="btn btn-danger btn-delete-product" data-product-idx="${idx}" style="padding: 8px 15px;">Eliminar</button>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.btn-delete-product').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.getAttribute('data-product-idx'));
+                    deleteProduct(idx);
+                });
+            });
+        }
+
+        function addProduct() {
+            const name = document.getElementById('newProductName').value.trim();
+            const price = parseInt(document.getElementById('newProductPrice').value);
+
+            if (!name || !price || price < 0) {
+                alert('Ingresa nombre y precio válidos');
+                return;
+            }
+
+            products.push({ name, price });
+            saveConfig();
+            renderProductList();
+            renderProductSelect();
+            document.getElementById('newProductName').value = '';
+            document.getElementById('newProductPrice').value = '';
+            
+            showNotification(`✓ ${name} agregado`, 'success');
+        }
+
+        function deleteProduct(index) {
+            const product = products[index];
+            if (confirm(`¿Eliminar "${product.name}"?`)) {
+                products.splice(index, 1);
+                saveConfig();
+                renderProductList();
+                renderProductSelect();
+                showNotification(`✓ ${product.name} eliminado`, 'success');
+            }
+        }
+
+        // ========================================
+        // CONFIGURACIÓN - MESAS
+        // ========================================
+
+        function openTablesConfig() {
+            if (currentUser.role !== 'admin') return;
+
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = 'Configurar Mesas';
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Número de Mesas</label>
+                    <input type="number" id="numTablesInput" value="${NUM_TABLES}" min="1" max="20">
+                </div>
+                <p style="color: #999; font-size: 0.9em; margin-bottom: 20px;">
+                    ⚠️ Reiniciará el sistema
+                </p>
+                <button class="btn btn-primary" id="btnUpdateTables">Guardar</button>
+                <button class="btn btn-danger" id="btnCancelTables">Cancelar</button>
+            `;
+            modal.classList.add('active');
+            
+            document.getElementById('btnUpdateTables').addEventListener('click', updateNumTables);
+            document.getElementById('btnCancelTables').addEventListener('click', closeModal);
+        }
+
+        function updateNumTables() {
+            const newNum = parseInt(document.getElementById('numTablesInput').value);
+            if (newNum < 1 || newNum > 20) {
+                alert('Entre 1 y 20 mesas');
+                return;
+            }
+
+            if (confirm('¿Reiniciar mesas?')) {
+                Object.keys(activeIntervals).forEach(key => clearInterval(activeIntervals[key]));
+                activeIntervals = {};
+                NUM_TABLES = newNum;
+                saveConfig();
+                initTables();
+                renderTables();
+                closeModal();
+                showNotification(`✓ ${newNum} mesas configuradas`, 'success');
+            }
+        }
+
+        // ========================================
+        // CONFIGURACIÓN - PRECIOS
+        // ========================================
+
+        function openPriceConfig() {
+            if (currentUser.role !== 'admin') return;
+
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = 'Configurar Precios';
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Precio por Hora ($)</label>
+                    <input type="number" id="hourlyRateInput" value="${HOURLY_RATE}" min="0" step="1000">
+                </div>
+                <p style="color: #999; font-size: 0.9em; margin-bottom: 20px;">
+                    Actual: ${HOURLY_RATE.toLocaleString('es-CO')}/hora
+                </p>
+                <button class="btn btn-primary" id="btnUpdatePrice">Guardar</button>
+                <button class="btn btn-danger" id="btnCancelPrice">Cancelar</button>
+            `;
+            modal.classList.add('active');
+            
+            document.getElementById('btnUpdatePrice').addEventListener('click', updateHourlyRate);
+            document.getElementById('btnCancelPrice').addEventListener('click', closeModal);
+        }
+
+        function updateHourlyRate() {
+            const newRate = parseInt(document.getElementById('hourlyRateInput').value);
+            if (newRate < 0) {
+                alert('El precio debe ser positivo');
+                return;
+            }
+            HOURLY_RATE = newRate;
+            saveConfig();
+            closeModal();
+            showNotification(`✓ Precio: ${HOURLY_RATE.toLocaleString('es-CO')}/h`, 'success');
+        }
+
+        // ========================================
+        // GESTIONAR USUARIOS
+        // ========================================
+
+        function openManageUsers() {
+            if (currentUser.role !== 'admin') return;
+
+            const modal = document.getElementById('tableModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = '👥 Gestionar Usuarios';
+            body.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Usuarios actuales:</strong><br>
+                    👑 Admin: <code>admin / admin123</code><br>
+                    👤 Empleado: <code>empleado / emp123</code>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <strong>⚠️ Nota:</strong> Para cambiar contraseñas, edita el código HTML en la sección USERS.
+                </div>
+
+                <button class="btn btn-danger" onclick="closeModal()">Cerrar</button>
+            `;
+            modal.classList.add('active');
+        }
+
+        // ========================================
+        // UTILIDADES
+        // ========================================
 
         function getElapsedTime(startTime) {
             return Date.now() - startTime;
@@ -928,259 +1760,27 @@
             if (e.target === this) closeModal();
         });
 
-        document.getElementById('btnConfigSheets').addEventListener('click', function() {
-            if (currentUser.role !== 'admin') {
-                alert('Solo administradores');
-                return;
-            }
+        // ========================================
+        // EVENT LISTENERS
+        // ========================================
 
-            const modal = document.getElementById('tableModal');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
+        document.getElementById('btnQuickSale').addEventListener('click', addQuickSale);
+        document.getElementById('btnConfigSheets').addEventListener('click', openSheetsConfig);
+        document.getElementById('btnManageProducts').addEventListener('click', openSettingsModal);
+        document.getElementById('btnConfigTables').addEventListener('click', openTablesConfig);
+        document.getElementById('btnConfigPrices').addEventListener('click', openPriceConfig);
+        document.getElementById('btnManageUsers').addEventListener('click', openManageUsers);
+        document.getElementById('btnClearHistory').addEventListener('click', clearHistory);
+        document.getElementById('btnExportReport').addEventListener('click', exportReport);
 
-            title.textContent = 'Configurar Google Sheets';
-            body.innerHTML = `
-                <div class="alert alert-info">
-                    <strong>Pasos:</strong><br>
-                    1. Ve a tu Google Sheet<br>
-                    2. Extensiones → Apps Script<br>
-                    3. Implementar → Administrar implementaciones<br>
-                    4. Copia la URL que termina en /exec
-                </div>
-
-                <div class="form-group">
-                    <label>URL del Apps Script</label>
-                    <input type="text" id="sheetsUrlInput" value="${SHEETS_URL}" 
-                           placeholder="https://script.google.com/.../exec">
-                </div>
-
-                <button class="btn btn-success" id="btnSaveSheetsUrl">Guardar y Probar</button>
-                <button class="btn btn-danger" id="btnCloseModal">Cancelar</button>
-            `;
-            modal.classList.add('active');
-
-            document.getElementById('btnSaveSheetsUrl').addEventListener('click', saveSheetsUrl);
-            document.getElementById('btnCloseModal').addEventListener('click', closeModal);
-        });
-
-        async function saveSheetsUrl() {
-            const url = document.getElementById('sheetsUrlInput').value.trim();
-            
-            if (!url) {
-                alert('Ingresa la URL');
-                return;
-            }
-
-            if (!url.endsWith('/exec')) {
-                alert('La URL debe terminar en /exec');
-                return;
-            }
-
-            SHEETS_URL = url;
-            saveConfig();
-            updateConnectionStatus();
-
-            const testBtn = document.getElementById('btnSaveSheetsUrl');
-            testBtn.disabled = true;
-            testBtn.textContent = 'Probando...';
-
-            try {
-                const response = await fetch(SHEETS_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'test' })
-                });
-
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    alert('Conexión exitosa');
-                    closeModal();
-                } else {
-                    throw new Error('No se pudo conectar');
-                }
-            } catch (error) {
-                alert('Error de conexión. Verifica la URL.');
-            } finally {
-                testBtn.disabled = false;
-                testBtn.textContent = 'Guardar y Probar';
-            }
-        }
-
-        document.getElementById('btnManageProducts').addEventListener('click', function() {
-            if (currentUser.role !== 'admin') {
-                alert('Solo administradores');
-                return;
-            }
-
-            const modal = document.getElementById('tableModal');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
-
-            title.textContent = 'Gestionar Productos';
-            body.innerHTML = `
-                <div id="productList" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;"></div>
-                
-                <div style="padding-top: 20px; border-top: 2px solid #f0f0f0;">
-                    <h3 style="margin-bottom: 15px;">Agregar Producto</h3>
-                    <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" id="newProductName" placeholder="Ej: Pizza">
-                    </div>
-                    <div class="form-group">
-                        <label>Precio</label>
-                        <input type="number" id="newProductPrice" placeholder="0" min="0" step="500">
-                    </div>
-                    <button class="btn btn-primary" id="btnAddNewProduct">Agregar</button>
-                    <button class="btn btn-danger" id="btnCloseProductsModal">Cerrar</button>
-                </div>
-            `;
-            
-            renderProductList();
-            modal.classList.add('active');
-            
-            document.getElementById('btnAddNewProduct').addEventListener('click', addProduct);
-            document.getElementById('btnCloseProductsModal').addEventListener('click', closeModal);
-        });
-
-        function renderProductList() {
-            const list = document.getElementById('productList');
-            if (products.length === 0) {
-                list.innerHTML = '<p style="text-align: center; color: #999;">No hay productos</p>';
-                return;
-            }
-            
-            list.innerHTML = products.map((p, idx) => `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
-                    <div>
-                        <strong>${p.name}</strong><br>
-                        <span style="color: #667eea;">${p.price.toLocaleString('es-CO')}</span>
-                    </div>
-                    <button class="btn btn-danger btn-delete-product" data-product-idx="${idx}" style="padding: 8px 15px;">Eliminar</button>
-                </div>
-            `).join('');
-            
-            document.querySelectorAll('.btn-delete-product').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const idx = parseInt(this.getAttribute('data-product-idx'));
-                    deleteProduct(idx);
-                });
-            });
-        }
-
-        function addProduct() {
-            const name = document.getElementById('newProductName').value.trim();
-            const price = parseInt(document.getElementById('newProductPrice').value);
-
-            if (!name || !price || price < 0) {
-                alert('Ingresa nombre y precio válidos');
-                return;
-            }
-
-            products.push({ name, price });
-            saveConfig();
-            renderProductList();
-            renderProductSelect();
-            document.getElementById('newProductName').value = '';
-            document.getElementById('newProductPrice').value = '';
-            
-            alert(`${name} agregado`);
-        }
-
-        function deleteProduct(index) {
-            const product = products[index];
-            if (confirm(`¿Eliminar "${product.name}"?`)) {
-                products.splice(index, 1);
-                saveConfig();
-                renderProductList();
-                renderProductSelect();
-                alert(`${product.name} eliminado`);
-            }
-        }
-
-        document.getElementById('btnConfigTables').addEventListener('click', function() {
-            if (currentUser.role !== 'admin') return;
-
-            const modal = document.getElementById('tableModal');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
-
-            title.textContent = 'Configurar Mesas';
-            body.innerHTML = `
-                <div class="form-group">
-                    <label>Número de Mesas</label>
-                    <input type="number" id="numTablesInput" value="${NUM_TABLES}" min="1" max="20">
-                </div>
-                <p style="color: #999; margin-bottom: 20px;">
-                    Reiniciará el sistema
-                </p>
-                <button class="btn btn-primary" id="btnUpdateTables">Guardar</button>
-                <button class="btn btn-danger" id="btnCancelTables">Cancelar</button>
-            `;
-            modal.classList.add('active');
-            
-            document.getElementById('btnUpdateTables').addEventListener('click', updateNumTables);
-            document.getElementById('btnCancelTables').addEventListener('click', closeModal);
-        });
-
-        function updateNumTables() {
-            const newNum = parseInt(document.getElementById('numTablesInput').value);
-            if (newNum < 1 || newNum > 20) {
-                alert('Entre 1 y 20 mesas');
-                return;
-            }
-
-            if (confirm('¿Reiniciar mesas?')) {
-                Object.keys(activeIntervals).forEach(key => clearInterval(activeIntervals[key]));
-                activeIntervals = {};
-                NUM_TABLES = newNum;
-                saveConfig();
-                initTables();
-                renderTables();
-                closeModal();
-                alert(`${newNum} mesas configuradas`);
-            }
-        }
-
-        document.getElementById('btnConfigPrices').addEventListener('click', function() {
-            if (currentUser.role !== 'admin') return;
-
-            const modal = document.getElementById('tableModal');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
-
-            title.textContent = 'Configurar Precios';
-            body.innerHTML = `
-                <div class="form-group">
-                    <label>Precio por Hora</label>
-                    <input type="number" id="hourlyRateInput" value="${HOURLY_RATE}" min="0" step="1000">
-                </div>
-                <p style="color: #999; margin-bottom: 20px;">
-                    Actual: ${HOURLY_RATE.toLocaleString('es-CO')}/hora
-                </p>
-                <button class="btn btn-primary" id="btnUpdatePrice">Guardar</button>
-                <button class="btn btn-danger" id="btnCancelPrice">Cancelar</button>
-            `;
-            modal.classList.add('active');
-            
-            document.getElementById('btnUpdatePrice').addEventListener('click', updateHourlyRate);
-            document.getElementById('btnCancelPrice').addEventListener('click', closeModal);
-        });
-
-        function updateHourlyRate() {
-            const newRate = parseInt(document.getElementById('hourlyRateInput').value);
-            if (newRate < 0) {
-                alert('El precio debe ser positivo');
-                return;
-            }
-            HOURLY_RATE = newRate;
-            saveConfig();
-            closeModal();
-            alert(`Precio actualizado: ${HOURLY_RATE.toLocaleString('es-CO')}/h`);
-        }
+        // ========================================
+        // INICIALIZACIÓN
+        // ========================================
 
         initAuth();
+        renderProductSelect();
         
-        console.log('Sistema de Billar cargado correctamente');
+        console.log('🎱 Sistema de Billar Avanzado cargado');
     </script>
 </body>
 </html>
